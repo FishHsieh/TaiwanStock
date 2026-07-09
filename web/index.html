@@ -1,0 +1,12478 @@
+﻿
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html lang="zh-Hant">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta charset="utf-8">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <meta name="report-version" content="20260708_1624">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <title>TaiwanStockBot 市場快訊 2026/07/08 16:24</title>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  :root {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --paper: #f7f1e6;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --paper-2: #fffdf8;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --ink: #1d1712;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --muted: #6a5d51;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --accent: #9c3228;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --accent-2: #b26b1a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --line: rgba(46, 32, 22, 0.14);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --shadow: 0 18px 45px rgba(46, 32, 22, 0.12);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  * { box-sizing: border-box; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  body {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Georgia", "Times New Roman", "Noto Serif TC", "PMingLiU", serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--ink);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      radial-gradient(circle at top, rgba(156, 50, 40, 0.06), transparent 30%),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      linear-gradient(180deg, #fbf7ef 0%, #f0e8db 100%);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    min-height: 100vh;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .page {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    width: min(1040px, calc(100% - 28px));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 auto;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 28px 0 44px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .hero {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 8px 0 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-bottom: 20px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-bottom: 3px double var(--line);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .meta {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: flex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    flex-wrap: wrap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    gap: 8px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-bottom: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .pill {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: inline-flex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    gap: 8px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 999px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 5px 11px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 11px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    letter-spacing: 0.08em;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    text-transform: uppercase;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--accent);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(156, 50, 40, 0.06);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid rgba(156, 50, 40, 0.16);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .headline {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Noto Serif TC", "PMingLiU", "MingLiU", Georgia, serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: clamp(32px, 5.4vw, 56px);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.02;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    letter-spacing: -0.04em;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 0 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #111;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .subhead {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    max-width: 72ch;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--muted);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.8;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .card {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(255, 253, 248, 0.82);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid var(--line);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 20px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    box-shadow: var(--shadow);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    overflow: hidden;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    backdrop-filter: blur(6px);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .card-header {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 16px 20px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(180deg, rgba(156, 50, 40, 0.08), rgba(156, 50, 40, 0.02));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-bottom: 1px solid var(--line);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: flex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    justify-content: space-between;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    gap: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    flex-wrap: wrap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--muted);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 13px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 28px 24px 26px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: var(--paper-2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h1 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 0 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Noto Serif TC", "PMingLiU", "MingLiU", Georgia, serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: clamp(28px, 3.6vw, 42px);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    letter-spacing: -0.03em;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #111;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 28px 0 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding-left: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left: 4px solid var(--accent);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Noto Serif TC", "PMingLiU", "MingLiU", Georgia, serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 22px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.2;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--accent);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2.section-heading {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: flex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    gap: 10px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 1.08rem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 900;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    letter-spacing: 0.03em;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 36px 0 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 18px 22px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid rgba(156, 50, 40, 0.18);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left-width: 10px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(135deg, rgba(156, 50, 40, 0.12), rgba(255, 255, 255, 0.96));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    box-shadow: 0 14px 30px rgba(46, 32, 22, 0.10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2.section-heading-etf {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left-color: #1a7a43;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #1a7a43;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(135deg, rgba(26, 122, 67, 0.12), rgba(255, 255, 255, 0.96));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2.section-heading-financial {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left-color: #8a5d1a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #8a5d1a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(135deg, rgba(138, 93, 26, 0.12), rgba(255, 255, 255, 0.96));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2.section-heading-stock {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left-color: #9c3228;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #9c3228;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(135deg, rgba(156, 50, 40, 0.12), rgba(255, 255, 255, 0.96));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h2.section-heading-subtopic {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left-color: #9c3228;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #8f241b;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(135deg, rgba(156, 50, 40, 0.08), rgba(255, 255, 255, 0.97));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article h3 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 22px 0 10px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 10px 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left: 4px solid rgba(156, 50, 40, 0.32);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(255, 255, 255, 0.72);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 1.02rem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 800;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #6d2f27;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article p {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 0 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Noto Serif TC", Georgia, serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.92;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #26211c;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article strong {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #111;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article ol,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article ul {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 0 18px 24px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding-left: 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #26211c;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article li {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 8px 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.8;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .table-wrap {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0 0 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    overflow-x: auto;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    width: 100%;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-collapse: collapse;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin: 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    white-space: nowrap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table th,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table td {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 10px 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid var(--line);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    vertical-align: top;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    text-align: left;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table th {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(156, 50, 40, 0.08);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table tbody tr:nth-child(even) td {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(156, 50, 40, 0.03);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table td.recommendation-positive {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #b22222;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 800;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table td.recommendation-negative {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #1a7a43;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 800;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .article table.report-table td.volume-positive {
+
+
+
+
+
+
+
+    color: #b22222;
+
+
+
+
+
+
+
+    font-weight: 800;
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .links-card {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-bottom: 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 18px 18px 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid rgba(156, 50, 40, 0.18);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 18px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: linear-gradient(180deg, rgba(156, 50, 40, 0.05), rgba(255, 255, 255, 0.72));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .links-kicker {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--accent);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 13px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    letter-spacing: 0.04em;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    text-transform: uppercase;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-bottom: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .links-grid {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: grid;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    gap: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .link-card {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    display: block;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 14px 14px 13px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: #fff;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border: 1px solid rgba(29, 23, 18, 0.12);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    text-decoration: none;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .link-card:hover {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    transform: translateY(-1px);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-color: rgba(156, 50, 40, 0.35);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    box-shadow: 0 10px 24px rgba(46, 32, 22, 0.08);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .link-label {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #111;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 15px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-weight: 700;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-bottom: 4px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .link-description {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--muted);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 13px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.6;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .note {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-top: 22px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 14px 16px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-left: 4px solid var(--accent-2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(178, 107, 26, 0.08);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: #4c3f31;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.7;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .footer {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    margin-top: 14px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    color: var(--muted);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-size: 12px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    line-height: 1.6;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  a { color: var(--accent); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  code {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    background: rgba(156, 50, 40, 0.08);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    padding: 0 .28rem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    border-radius: 6px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    font-family: Consolas, "Courier New", monospace;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @media (max-width: 640px) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .page { width: min(100% - 20px, 1040px); padding: 20px 0 30px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .article { padding: 22px 18px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .card-header { padding: 14px 16px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <main class="page">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <section class="hero">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div class="meta">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <span class="pill">TaiwanStockBot</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <span class="pill">市場快訊</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <span class="pill">2026/07/08 16:24</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div class="headline">盤中市場快訊</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <section class="card">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div class="card-header">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div>更新時間：2026/07/08 16:24</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <article class="article">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h2>收盤焦點｜盤中/午休無；台股/櫃買、韓日越收盤；美股未開盤；外匯/商品/加密全天報價</h2>
+    <p>資料時間：2026-07-08 16:14 台北時間。依本機市場時間資料庫，台股/櫃買、韓股、日股、越南均已收盤；美股仍未開盤，因此美股、費半與美國長債 ETF (TLT) 使用快照，不視為美股盤中變動；美元指數、日圓匯率、黃金、油價與比特幣為全天報價。</p>
+    <p>核心判斷：台股上漲 0.56%，但仍低於 5日、月線、季線，短線反彈還不是全面轉強；櫃買指數大漲 1.34%，且量能高於前日與 5日均量，內資中小型股相對活躍。韓股重挫、日股收低、費半快照弱勢，代表外部科技風險仍在。越南大盤 (VNINDEX) 收 1853.70、上漲 0.29%，但缺可比均線，不列入均線表；日圓匯率 升至 162.30、上漲 0.13%，代表日圓偏弱，對亞洲風險資產不算有利。</p>
+    <h2>市場概覽</h2>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">市場</th>
+        <th style="text-align:left">階段</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">台股 (TAIEX)</td>
+        <td style="text-align:left">收盤</td>
+        <td style="text-align:right">45734.41 / +255.30 (+0.56%)</td>
+        <td style="text-align:left">低於 5日、月線、季線；高於 10日、半年線、年線</td>
+        <td style="text-align:left">N/A</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">櫃買指數</td>
+        <td style="text-align:left">收盤</td>
+        <td style="text-align:right">445.38 / +5.87 (+1.34%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +11.8%、較5日 +20.7%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">韓股 (KOSPI)</td>
+        <td style="text-align:left">收盤</td>
+        <td style="text-align:right">7246.79 / -409.52 (-5.35%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -4.0%、較5日 +3.1%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">日股 (NIKKEI)</td>
+        <td style="text-align:left">收盤</td>
+        <td style="text-align:right">66819.05 / -1437.91 (-2.11%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">N/A</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">費城半導體指數 (^SOX，SOXX均線代理)</td>
+        <td style="text-align:left">未開盤</td>
+        <td style="text-align:right">12300.52 / -599.62 (-4.65%)</td>
+        <td style="text-align:left">SOXX 低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">N/A</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">NASDAQ 綜合指數</td>
+        <td style="text-align:left">未開盤</td>
+        <td style="text-align:right">25818.69 / -302.47 (-1.16%)</td>
+        <td style="text-align:left">低於 5日、月線、半年線；高於 10日、季線、年線</td>
+        <td style="text-align:left">較前日 -7.8%、較5日 -21.6%</td>
+        <td style="text-align:left">持有觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">S&amp;P 500</td>
+        <td style="text-align:left">未開盤</td>
+        <td style="text-align:right">7503.85 / -33.58 (-0.45%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -39.8%、較5日 -46.7%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">美國長債 ETF (TLT)</td>
+        <td style="text-align:left">未開盤</td>
+        <td style="text-align:right">84.55 / -0.90 (-1.05%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td class="volume-positive" style="text-align:left">較前日 +36.3%、較5日 +4.2%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">美元指數</td>
+        <td style="text-align:left">全天報價</td>
+        <td style="text-align:right">100.98 / -0.16 (-0.16%)</td>
+        <td style="text-align:left">低於 5日、10日；高於 月線、季線、半年線、年線</td>
+        <td style="text-align:left">N/A</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">黃金期貨 (GC=F)</td>
+        <td style="text-align:left">全天報價</td>
+        <td style="text-align:right">4127.60 / -17.70 (-0.43%)</td>
+        <td style="text-align:left">低於 月線、季線、半年線、年線；高於 5日、10日</td>
+        <td class="volume-positive" style="text-align:left">較前日 +3026.3%、較5日 +3753.3%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">石油期貨 (CL=F)</td>
+        <td style="text-align:left">全天報價</td>
+        <td style="text-align:right">72.20 / +1.76 (+2.50%)</td>
+        <td style="text-align:left">低於 月線、季線、半年線、年線；高於 5日、10日</td>
+        <td style="text-align:left">較前日 -81.6%、較5日 -79.6%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">比特幣 (BTC-USD)</td>
+        <td style="text-align:left">全天報價</td>
+        <td style="text-align:right">62761.97 / -535.42 (-0.85%)</td>
+        <td style="text-align:left">低於 5日、年線；高於 10日、月線、季線、半年線</td>
+        <td style="text-align:left">較前日 -3.2%、較5日 +15.1%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <h2>流動性與總經</h2>
+    <p>Yahoo 融資融券資料為 2026/07/07：融資餘額 6,109.45 億元，日減 204.00 億元，代表槓桿多方明顯降溫；融券餘額 213,844 張，日增 4,834 張，空方或避險部位增加；券資比 2.24%，還不是極端空方，但方向偏謹慎。</p>
+    <p>TAIFEX 三大法人期貨未平倉：外資淨部位 26,512 口，日增 20,143 口，外資多單增加幅度大於空單，期貨端對台股有支撐；投信淨部位 860 口、日增 894 口，自營商淨部位 29,703 口、日增 38,821 口，也偏向提高多方曝險。不過現貨融資大減與外部科技股壓力並存，短線不宜把單日反彈解讀成全面轉多。</p>
+    <p>台灣出口近三個月仍強：2026年3月 801.81 億美元、年增 61.85%；4月 676.19 億美元、年增 39.00%；5月 784.79 億美元、年增 51.68%。月度趨勢是 4月回落、5月反彈，整體仍維持高檔震盪，AI、半導體與電子供應鏈需求仍是台股基本面支撐。</p>
+    <p>黃金下跌 0.43%，主因不是美元指數 當下小跌，而是美國長債 ETF (TLT) 明顯走弱，反映利率壓力仍在，壓抑無息資產估值；油價上漲 2.50%，但仍低於月線、季線與半年線，偏短線反彈，不是中期趨勢已修復。</p>
+    <h2>ETF 操作表</h2>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00403A主動統一升級50</td>
+        <td style="text-align:right">10.41 / -0.04 (-0.38%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；約當 10日</td>
+        <td style="text-align:left">較前日 -42.7%、較5日 -16.6%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">0050元大台灣50</td>
+        <td style="text-align:right">106.05 / -0.15 (-0.14%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -13.2%、較5日 +21.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">0052富邦科技</td>
+        <td style="text-align:right">62.15 / -0.05 (-0.08%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -4.2%、較5日 -6.6%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">0056元大高股息</td>
+        <td style="text-align:right">52.35 / +0.20 (+0.38%)</td>
+        <td style="text-align:left">低於 5日、月線、季線；高於 10日、半年線、年線</td>
+        <td style="text-align:left">較前日 -42.7%、較5日 -10.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00631L元大台灣50正2</td>
+        <td style="text-align:right">37.14 / -0.05 (-0.13%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -37.9%、較5日 -20.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00635U期元大S&amp;P黃金</td>
+        <td style="text-align:right">43.01 / +0.01 (+0.02%)</td>
+        <td style="text-align:left">低於 5日、半年線、年線；高於 10日、月線、季線</td>
+        <td style="text-align:left">較前日 -37.1%、較5日 -57.5%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00642U元大石油</td>
+        <td style="text-align:right">23.77 / +1.12 (+4.94%)</td>
+        <td style="text-align:left">低於 月線、季線、半年線；高於 5日、10日、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +48.8%、較5日 +112.5%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00646元大S&amp;P500</td>
+        <td style="text-align:right">75.70 / -0.20 (-0.26%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +148.6%、較5日 +180.7%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00713元大台灣高息低波</td>
+        <td style="text-align:right">60.55 / -0.05 (-0.08%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -41.9%、較5日 -51.6%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00735國泰臺韓科技</td>
+        <td style="text-align:right">106.35 / -1.05 (-0.98%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">較前日 -31.6%、較5日 -6.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00738U期元大道瓊白銀</td>
+        <td style="text-align:right">48.62 / -0.17 (-0.35%)</td>
+        <td style="text-align:left">低於 5日、月線、半年線、年線；高於 10日、季線</td>
+        <td style="text-align:left">較前日 -34.1%、較5日 -31.9%</td>
+        <td style="text-align:left">持有觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00757統一FANG+</td>
+        <td style="text-align:right">130.45 / +1.20 (+0.93%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -7.8%、較5日 +3.6%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00763U期街口道瓊銅</td>
+        <td style="text-align:right">32.99 / +0.08 (+0.24%)</td>
+        <td style="text-align:left">低於 月線、季線；高於 5日、10日、半年線、年線</td>
+        <td style="text-align:left">較前日 -62.4%、較5日 -70.8%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00830國泰費城半導體</td>
+        <td style="text-align:right">88.55 / -1.15 (-1.28%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">較前日 -13.9%、較5日 -11.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00876元大全球5G</td>
+        <td style="text-align:right">93.85 / -2.00 (-2.09%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +52.9%、較5日 +9.6%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00878國泰永續高股息</td>
+        <td style="text-align:right">33.20 / +0.23 (+0.70%)</td>
+        <td style="text-align:left">低於 5日、月線、季線；高於 10日、半年線、年線</td>
+        <td style="text-align:left">較前日 -11.4%、較5日 +3.5%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00891中信關鍵半導體</td>
+        <td style="text-align:right">36.16 / -0.15 (-0.41%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -41.0%、較5日 -20.7%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00895富邦未來車</td>
+        <td style="text-align:right">50.65 / -0.50 (-0.98%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -43.4%、較5日 -63.7%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00900富邦特選高股息30</td>
+        <td style="text-align:right">19.07 / +0.00 (+0.00%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +19.4%、較5日 +3.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00909國泰數位支付服務</td>
+        <td style="text-align:right">45.00 / -1.28 (-2.77%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -2.5%、較5日 +7.7%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00910第一金太空衛星</td>
+        <td style="text-align:right">61.50 / -1.30 (-2.07%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -37.2%、較5日 -37.6%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00911兆豐洲際半導體</td>
+        <td style="text-align:right">60.60 / -1.60 (-2.57%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +3.2%、較5日 +22.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00915凱基優選高股息30</td>
+        <td style="text-align:right">32.17 / +0.24 (+0.75%)</td>
+        <td style="text-align:left">低於 5日、月線、季線；高於 10日、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +1.2%、較5日 +23.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00918大華優利高填息30</td>
+        <td style="text-align:right">31.88 / +0.21 (+0.66%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -6.7%、較5日 -36.7%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00919群益台灣精選高息</td>
+        <td style="text-align:right">29.94 / +0.32 (+1.08%)</td>
+        <td style="text-align:left">低於 5日、半年線；高於 10日、月線、季線、年線</td>
+        <td style="text-align:left">較前日 +4.5%、較5日 -0.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00922國泰台灣領袖50</td>
+        <td style="text-align:right">40.48 / -0.05 (-0.12%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -37.6%、較5日 -47.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00924復華S&amp;P500</td>
+        <td style="text-align:right">32.54 / -0.04 (-0.12%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -19.3%、較5日 +24.0%</td>
+        <td style="text-align:left">逢回承接</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00947台新臺灣IC設計</td>
+        <td style="text-align:right">36.45 / -0.43 (-1.17%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">較前日 -30.3%、較5日 -33.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">009805新光美國電力基建</td>
+        <td style="text-align:right">16.54 / -0.27 (-1.61%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -4.5%、較5日 -6.2%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">009816凱基台灣TOP50</td>
+        <td style="text-align:right">15.26 / -0.03 (-0.20%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -30.2%、較5日 -9.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00981A主動統一台股增長</td>
+        <td style="text-align:right">29.75 / -0.09 (-0.30%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -41.1%、較5日 -19.6%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00982A主動群益台灣強棒</td>
+        <td style="text-align:right">23.83 / -0.26 (-1.08%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -39.1%、較5日 -11.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00988A主動統一全球創新</td>
+        <td style="text-align:right">19.15 / -0.47 (-2.40%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -46.7%、較5日 -13.5%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00990A主動元大AI新經濟</td>
+        <td style="text-align:right">17.88 / -0.41 (-2.24%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -39.7%、較5日 -14.3%</td>
+        <td style="text-align:left">避開</td>
+      </tr>
+      <tr>
+        <td class="recommendation-negative" style="text-align:left">00991A主動復華未來50</td>
+        <td style="text-align:right">19.10 / -0.02 (-0.10%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -53.6%、較5日 -24.2%</td>
+        <td style="text-align:left">減碼觀察</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <h2 class="section-heading section-heading-financial">金融操作表</h2>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">00917中信特選金融</td>
+        <td style="text-align:right">23.26 / -0.05 (-0.21%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -80.2%、較5日 -69.4%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">ETF，不適用</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2801彰銀</td>
+        <td style="text-align:right">23.90 / +0.40 (+1.70%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 +35.0%、較5日 -50.3%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +8.71%、YoY +9.51%、累計 YoY +14.62%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2812台中銀</td>
+        <td style="text-align:right">20.60 / -0.05 (-0.24%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -49.9%、較5日 -41.1%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM -18.32%、YoY +28.33%、累計 YoY +23.88%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2834臺企銀</td>
+        <td style="text-align:right">18.25 / +0.15 (+0.83%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +44.4%、較5日 +63.1%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +4.45%、YoY +22.52%、累計 YoY +7.17%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2855統一證</td>
+        <td style="text-align:right">50.40 / -0.70 (-1.37%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -50.9%、較5日 -24.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM -1.18%、YoY +428.43%、累計 YoY +383.34%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2880華南金</td>
+        <td style="text-align:right">39.70 / +0.75 (+1.93%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -23.0%、較5日 -3.5%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +0.55%、YoY +72.53%、累計 YoY +26.84%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2881富邦金</td>
+        <td style="text-align:right">126.00 / +3.00 (+2.44%)</td>
+        <td style="text-align:left">低於 5日、季線、半年線；高於 10日、月線、年線</td>
+        <td style="text-align:left">較前日 +24.1%、較5日 -36.7%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM -43.01%、YoY +155.03%、累計 YoY +83.61%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2882國泰金</td>
+        <td style="text-align:right">98.00 / +1.00 (+1.03%)</td>
+        <td style="text-align:left">低於 5日、季線、半年線；高於 10日、月線、年線</td>
+        <td style="text-align:left">較前日 -30.3%、較5日 -42.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM -17.88%、YoY +130.64%、累計 YoY -3.20%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2883凱基金</td>
+        <td style="text-align:right">30.70 / +0.60 (+1.99%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -43.5%、較5日 -6.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM -13.98%、YoY +126.09%、累計 YoY +277.79%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2884玉山金</td>
+        <td style="text-align:right">34.75 / +0.25 (+0.72%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -3.1%、較5日 -17.4%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +1.12%、YoY +25.30%、累計 YoY +24.84%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2885元大金</td>
+        <td style="text-align:right">71.50 / +1.70 (+2.44%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -24.1%、較5日 +25.3%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +23.23%、YoY +928.42%、累計 YoY +80.97%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2886兆豐金</td>
+        <td style="text-align:right">46.80 / +0.00 (+0.00%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -39.7%、較5日 -56.2%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM -7.53%、YoY +25.55%、累計 YoY +21.72%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2890永豐金</td>
+        <td style="text-align:right">41.90 / +0.80 (+1.95%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -21.5%、較5日 -42.3%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +4.89%、YoY +82.69%、累計 YoY +56.17%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2892第一金</td>
+        <td style="text-align:right">34.10 / +0.80 (+2.40%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -20.7%、較5日 -42.3%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM -0.23%、YoY +36.70%、累計 YoY +14.33%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <h2>個股操作表</h2>
+    <p>6274台燿收 1645.00、上漲 4.44%，屬 PCB載板&amp;SiC（CCL/電子材料），但本次 `sheet_trade_context.json` 未提供可比均線列，因此不放入操作表。</p>
+    <p>AIPC手機概念股</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">華碩</td>
+        <td style="text-align:right">687.00 / +24.00 (+3.62%)</td>
+        <td style="text-align:left">低於 5日、季線、半年線、年線；高於 10日、月線</td>
+        <td style="text-align:left">較前日 +33.4%、較5日 -16.6%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM -15.65%、YoY +9.30%、累計 YoY +34.54%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2376技嘉</td>
+        <td style="text-align:right">335.00 / +8.00 (+2.45%)</td>
+        <td style="text-align:left">低於 5日、月線、半年線；高於 10日、季線、年線</td>
+        <td style="text-align:left">較前日 -15.7%、較5日 -3.6%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/05 MoM -6.15%、YoY +4.98%、累計 YoY +44.76%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2377微星</td>
+        <td style="text-align:right">142.00 / +5.00 (+3.65%)</td>
+        <td style="text-align:left">低於 5日、月線；高於 10日、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +102.3%、較5日 +51.3%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/05 MoM -3.42%、YoY -23.73%、累計 YoY -7.22%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">廣達</td>
+        <td style="text-align:right">377.00 / +4.00 (+1.07%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +2.1%、較5日 +5.1%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +23.66%、YoY +102.87%、累計 YoY +86.48%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">大立光</td>
+        <td style="text-align:right">3950.00 / +60.00 (+1.54%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -19.0%、較5日 -7.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM -19.18%、YoY -10.46%、累計 YoY +10.88%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">訊連</td>
+        <td style="text-align:right">68.40 / +0.40 (+0.59%)</td>
+        <td style="text-align:left">低於 5日、月線、半年線；高於 10日、季線、年線</td>
+        <td style="text-align:left">較前日 -48.6%、較5日 -43.5%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/06 MoM +4.89%、YoY -9.77%、累計 YoY -4.76%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>機器人與自動化</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">2049上銀</td>
+        <td style="text-align:right">340.00 / -4.50 (-1.31%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -32.5%、較5日 -47.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +2.98%、YoY +31.62%、累計 YoY +18.05%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2059川湖</td>
+        <td style="text-align:right">8095.00 / -165.00 (-2.00%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -40.8%、較5日 +13.8%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +17.18%、YoY +220.52%、累計 YoY +98.95%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>先進封裝CoWoS概念</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">2449京元電子</td>
+        <td style="text-align:right">305.50 / -11.50 (-3.63%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -44.1%、較5日 -30.0%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/06 MoM -4.11%、YoY +28.64%、累計 YoY +36.08%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">日月光投控</td>
+        <td style="text-align:right">625.00 / -26.00 (-3.99%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +13.5%、較5日 +5.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM +1.26%、YoY +28.57%、累計 YoY +19.87%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6223旺矽</td>
+        <td style="text-align:right">6460.00 / +150.00 (+2.38%)</td>
+        <td style="text-align:left">低於 5日、10日、月線；高於 季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -12.3%、較5日 -7.7%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/05 MoM +28.36%、YoY +57.81%、累計 YoY +46.19%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6239力成</td>
+        <td style="text-align:right">318.00 / -5.50 (-1.70%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -48.3%、較5日 -39.8%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM -3.72%、YoY +21.71%、累計 YoY +32.41%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>矽晶圓與晶片代工</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">聯電</td>
+        <td style="text-align:right">163.00 / +8.00 (+5.16%)</td>
+        <td style="text-align:left">低於 5日、月線、季線；高於 10日、半年線、年線</td>
+        <td style="text-align:left">較前日 -6.7%、較5日 -23.6%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +0.79%、YoY +22.85%、累計 YoY +11.28%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">台積電</td>
+        <td style="text-align:right">2465.00 / +25.00 (+1.02%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -11.1%、較5日 -5.8%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +1.52%、YoY +30.09%、累計 YoY +29.98%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6770力積電</td>
+        <td style="text-align:right">71.20 / +1.10 (+1.57%)</td>
+        <td style="text-align:left">低於 5日、10日、月線；高於 季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -13.2%、較5日 -16.4%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/05 MoM +14.36%、YoY +58.86%、累計 YoY +31.42%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>IC設計&amp;IP概念</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">聯發科</td>
+        <td style="text-align:right">3995.00 / -35.00 (-0.87%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -16.2%、較5日 -18.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM +1.49%、YoY +4.99%、累計 YoY -1.59%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2458義隆</td>
+        <td style="text-align:right">186.00 / -2.00 (-1.06%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -63.2%、較5日 -30.4%</td>
+        <td style="text-align:left">偏多持有</td>
+        <td style="text-align:left">2026/06 MoM +5.48%、YoY +7.13%、累計 YoY +4.54%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3034聯詠</td>
+        <td style="text-align:right">544.00 / +13.00 (+2.45%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +15.2%、較5日 +45.6%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +6.48%、YoY +18.96%、累計 YoY -2.75%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3035智原</td>
+        <td style="text-align:right">216.00 / +17.00 (+8.54%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +85.1%、較5日 +59.8%</td>
+        <td style="text-align:left">偏多持有</td>
+        <td style="text-align:left">2026/06 MoM +52.40%、YoY +26.57%、累計 YoY -50.61%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3443創意</td>
+        <td style="text-align:right">4400.00 / -80.00 (-1.79%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線；高於 半年線、年線</td>
+        <td style="text-align:left">較前日 -20.9%、較5日 -24.7%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +5.44%、YoY +103.72%、累計 YoY +93.05%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">5274信驊</td>
+        <td style="text-align:right">13975.00 / -440.00 (-3.05%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線；高於 半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +8.2%、較5日 +26.4%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +2.19%、YoY +67.47%、累計 YoY +62.77%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>液冷散熱概念</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">3017奇鋐</td>
+        <td style="text-align:right">2325.00 / -125.00 (-5.10%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線；高於 半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +11.4%、較5日 +4.8%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +11.01%、YoY +66.11%、累計 YoY +85.46%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3653健策</td>
+        <td style="text-align:right">3200.00 / +5.00 (+0.16%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">較前日 -25.3%、較5日 -7.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +14.54%、YoY +57.64%、累計 YoY +26.64%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>重電&amp;綠能概念</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">光寶科</td>
+        <td style="text-align:right">214.00 / +1.00 (+0.47%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -38.4%、較5日 -31.4%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM +3.95%、YoY +29.56%、累計 YoY +22.52%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>PCB載板&amp;SiC</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">華通</td>
+        <td style="text-align:right">224.00 / +6.00 (+2.75%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -28.8%、較5日 -32.3%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/06 MoM +2.27%、YoY +20.96%、累計 YoY +13.20%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">台光電</td>
+        <td style="text-align:right">5315.00 / +95.00 (+1.82%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -30.9%、較5日 +15.8%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +13.54%、YoY +120.69%、累計 YoY +81.82%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3037欣興</td>
+        <td style="text-align:right">863.00 / +23.00 (+2.74%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線；高於 半年線、年線</td>
+        <td style="text-align:left">較前日 -19.8%、較5日 +19.0%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +5.95%、YoY +36.31%、累計 YoY +28.42%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3189景碩</td>
+        <td style="text-align:right">755.00 / +68.00 (+9.90%)</td>
+        <td style="text-align:left">低於 5日、10日；高於 月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -30.0%、較5日 -71.9%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +0.58%、YoY +32.27%、累計 YoY +29.79%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6213聯茂</td>
+        <td style="text-align:right">393.50 / +14.50 (+3.83%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -18.3%、較5日 +21.7%</td>
+        <td style="text-align:left">偏多持有</td>
+        <td style="text-align:left">2026/06 MoM +10.80%、YoY +47.94%、累計 YoY +25.62%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">8046南電</td>
+        <td style="text-align:right">1105.00 / +75.00 (+7.28%)</td>
+        <td style="text-align:left">低於 5日、10日；高於 月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +7.8%、較5日 +30.1%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/06 MoM +5.50%、YoY +50.03%、累計 YoY +37.20%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>傳產類股</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">7610聯友金屬</td>
+        <td style="text-align:right">2485.00 / +85.00 (+3.54%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +634.3%、較5日 +625.8%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +9.87%、YoY +462.18%、累計 YoY N/A</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>記憶體</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">華邦電</td>
+        <td style="text-align:right">168.50 / -5.50 (-3.16%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td style="text-align:left">較前日 +4.5%、較5日 -11.9%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +2.98%、YoY +189.88%、累計 YoY +139.20%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">南亞科</td>
+        <td style="text-align:right">396.00 / -7.00 (-1.74%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -21.4%、較5日 -13.1%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +6.21%、YoY +621.34%、累計 YoY +643.12%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">8299群聯</td>
+        <td style="text-align:right">2140.00 / -5.00 (-0.23%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線；高於 半年線、年線</td>
+        <td style="text-align:left">較前日 -38.2%、較5日 -19.5%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM +12.97%、YoY +301.23%、累計 YoY +229.02%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>被動元件</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">2327國巨</td>
+        <td style="text-align:right">891.00 / -14.00 (-1.55%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線；高於 年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +15.0%、較5日 +40.3%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/05 MoM +7.26%、YoY +47.46%、累計 YoY +27.35%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>BBU&amp;HVDC</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">台達電</td>
+        <td style="text-align:right">1885.00 / -5.00 (-0.26%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td class="volume-positive" style="text-align:left">較前日 +40.1%、較5日 +22.4%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/05 MoM +0.46%、YoY +43.65%、累計 YoY +37.99%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6409旭隼科技</td>
+        <td style="text-align:right">1140.00 / -45.00 (-3.80%)</td>
+        <td style="text-align:left">低於 5日；高於 10日、月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -29.6%、較5日 -35.0%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +4.85%、YoY +0.28%、累計 YoY -11.80%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>半導體廠房</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">6139亞翔</td>
+        <td style="text-align:right">866.00 / -17.00 (-1.93%)</td>
+        <td style="text-align:left">低於 5日、10日；高於 月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -13.6%、較5日 -18.9%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM +0.61%、YoY +103.26%、累計 YoY +75.23%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">帆宣</td>
+        <td style="text-align:right">546.00 / -16.00 (-2.85%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線；高於 10日、年線</td>
+        <td style="text-align:left">較前日 -12.5%、較5日 -5.2%</td>
+        <td style="text-align:left">減碼觀察</td>
+        <td style="text-align:left">2026/06 MoM +8.92%、YoY +120.99%、累計 YoY +39.48%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>電子代工/EMS</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">2312金寶電子</td>
+        <td style="text-align:right">34.15 / +0.05 (+0.15%)</td>
+        <td style="text-align:left">低於 5日、10日、月線；高於 季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -40.6%、較5日 -59.5%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/05 MoM +1.93%、YoY -8.10%、累計 YoY -11.55%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">鴻海</td>
+        <td style="text-align:right">237.50 / +0.50 (+0.21%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -23.9%、較5日 -30.1%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/06 MoM -4.38%、YoY +52.11%、累計 YoY +34.99%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2392正崴</td>
+        <td style="text-align:right">37.60 / +0.20 (+0.53%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -63.0%、較5日 -31.7%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/05 MoM -2.81%、YoY +15.70%、累計 YoY -7.64%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">3231緯創</td>
+        <td style="text-align:right">146.50 / -9.00 (-5.79%)</td>
+        <td style="text-align:left">低於 5日、10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +72.8%、較5日 +114.1%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/06 MoM +10.90%、YoY +53.85%、累計 YoY +94.01%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>電子通路</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">大聯大</td>
+        <td style="text-align:right">105.50 / -3.50 (-3.21%)</td>
+        <td style="text-align:left">低於 5日、月線、季線、半年線、年線；高於 10日</td>
+        <td style="text-align:left">較前日 -29.6%、較5日 -63.9%</td>
+        <td style="text-align:left">避開</td>
+        <td style="text-align:left">2026/05 MoM +8.39%、YoY +82.91%、累計 YoY +39.84%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>面板</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">3481群創</td>
+        <td style="text-align:right">65.20 / +1.00 (+1.56%)</td>
+        <td style="text-align:left">低於 5日、10日；高於 月線、季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -43.1%、較5日 -18.7%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM -2.78%、YoY +10.28%、累計 YoY +15.90%</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">6176瑞儀</td>
+        <td style="text-align:right">90.90 / -0.30 (-0.33%)</td>
+        <td style="text-align:left">低於 5日、年線；高於 10日、月線、季線、半年線</td>
+        <td style="text-align:left">較前日 -27.7%、較5日 -41.8%</td>
+        <td style="text-align:left">逢回承接</td>
+        <td style="text-align:left">2026/05 MoM -0.73%、YoY -11.74%、累計 YoY -4.03%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>半導體材料</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">1560中砂</td>
+        <td style="text-align:right">698.00 / -2.00 (-0.29%)</td>
+        <td style="text-align:left">低於 5日、10日、月線；高於 季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +31.5%、較5日 +39.5%</td>
+        <td style="text-align:left">持有觀察</td>
+        <td style="text-align:left">2026/06 MoM +0.45%、YoY +16.39%、累計 YoY +23.02%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>生技醫療</p>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">建議</th>
+        <th style="text-align:left">營收</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">6446藥華藥</td>
+        <td style="text-align:right">1530.00 / +35.00 (+2.34%)</td>
+        <td style="text-align:left">高於 5日、10日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +26.7%、較5日 +52.7%</td>
+        <td style="text-align:left">偏多持有</td>
+        <td style="text-align:left">2026/06 MoM -5.11%、YoY +94.88%、累計 YoY +74.59%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="links-card">
+  <div class="links-kicker">Google Workspace Live Links</div>
+  <div class="links-grid">
+    <a class="link-card" href="https://docs.google.com/spreadsheets/d/154_wkavzn289a-PuR-mMwb3USKNeW-gfLCkYFga-S6k/edit" target="_blank" rel="noopener noreferrer">
+      <div class="link-label">Google Sheet</div>
+      <div class="link-description">Live sheet preview</div>
+    </a>
+    <a class="link-card" href="https://docs.google.com/document/d/1UD2-7vvD90_Xs6xYAoypbcp2GCq0tcQbC8FJRGBbme0/edit" target="_blank" rel="noopener noreferrer">
+      <div class="link-label">Google Doc</div>
+      <div class="link-description">News-style reading view</div>
+    </a>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="note">附件同時包含 HTML 與 TXT 版本，方便瀏覽、轉寄與存檔。</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </article>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="footer">Generated by TaiwanStockBot on 2026-07-08 16:24:28.</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  (function () {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const currentVersion = '20260708_1624';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const versionUrl = 'report-version.json';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const pollIntervalMs = 5000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async function checkVersion() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const response = await fetch(versionUrl + '?t=' + Date.now(), { cache: 'no-store' });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (!response.ok) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          return;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const payload = await response.json();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (payload && payload.version && payload.version !== currentVersion) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          window.location.reload();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      } catch (error) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Ignore transient network failures.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    setTimeout(checkVersion, pollIntervalMs);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    setInterval(checkVersion, pollIntervalMs);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

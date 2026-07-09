@@ -1,0 +1,7 @@
+﻿# Copy this file to google_workspace.local.ps1 and fill in the values below.
+# The service account email in the JSON file must have edit access to the target Sheet and optional Doc.
+
+$env:GOOGLE_APPLICATION_CREDENTIALS = 'C:\path\to\service-account.json'
+$env:GOOGLE_SHEETS_ID = 'your_google_sheet_id'
+# Optional. Leave this line commented out if you only want to publish to Google Sheets.
+$env:GOOGLE_DOC_ID = 'your_google_doc_id'
