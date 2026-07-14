@@ -303,8 +303,11 @@ def parse_market_data(text: str) -> ParsedMarketData:
     rows: list[MarketRow] = []
     current: dict[str, str | float | None] | None = None
 
-    def parse_number(value: str) -> float:
-        return float(value.replace(",", "").replace(" ", ""))
+    def parse_number(value: str) -> float | None:
+        try:
+            return float(value.replace(",", "").replace(" ", ""))
+        except ValueError:
+            return None
 
     def resolve_label_and_ticker(raw_header: str) -> tuple[str, str]:
         raw_header = raw_header.strip()
@@ -384,21 +387,34 @@ def parse_market_data(text: str) -> ParsedMarketData:
 
         if current is None:
             continue
+        if ":" not in line:
+            continue
+        _key, raw_value = line.split(":", 1)
+        value = raw_value.strip()
+
         if current["price"] is None:
-            current["price"] = parse_number(line.split(":", 1)[1].strip())
+            parsed_price = parse_number(value)
+            if parsed_price is None:
+                continue
+            current["price"] = parsed_price
             continue
 
         if current["change"] is None:
-            current["change"] = parse_number(line.split(":", 1)[1].strip())
+            parsed_change = parse_number(value)
+            if parsed_change is None:
+                continue
+            current["change"] = parsed_change
             continue
 
         if current["pct"] is None:
-            pct_value = line.split(":", 1)[1].strip()
+            pct_value = value
             if pct_value.endswith("%"):
                 pct_value = pct_value[:-1].strip()
-            current["pct"] = parse_number(pct_value)
+            parsed_pct = parse_number(pct_value)
+            if parsed_pct is None:
+                continue
+            current["pct"] = parsed_pct
             continue
-
     flush_current()
 
     if not rows:

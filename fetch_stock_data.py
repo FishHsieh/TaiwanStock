@@ -22,6 +22,12 @@ from datetime import datetime, timedelta, timezone
 
 from html import unescape
 
+import io
+import json
+from functools import lru_cache
+import zipfile
+import xml.etree.ElementTree as ET
+
 
 
 
@@ -58,7 +64,7 @@ from zoneinfo import ZoneInfo
 
 
 
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 
 from bot_database import count_active_symbols, ensure_database, load_active_symbols, load_latest_institutional_futures_snapshot, seed_category_master, upsert_daily_ohlcv, upsert_symbol
 
@@ -1456,6 +1462,34 @@ class TaifexInstitutionalTraderSnapshot:
     fetched_at_local: str
     fetched_at_utc: str
     data_source: str
+
+
+@dataclass(frozen=True)
+class TaiwanExportTrendPoint:
+    period_label: str
+    export_value_billion_usd: float
+    yoy_pct: float
+
+
+@dataclass(frozen=True)
+class TaiwanExportTrendSnapshot:
+    article_title: str
+    article_date: str
+    points: tuple[TaiwanExportTrendPoint, ...]
+    fetched_at_local: str
+    fetched_at_utc: str
+    data_source: str
+
+
+TAIWAN_EXPORT_REFERENCE_LIST_URL = "https://www.trade.gov.tw/App_Ashx/getDataByNodeid.ashx"
+TAIWAN_EXPORT_REFERENCE_BASE_URL = "https://www.trade.gov.tw"
+TAIWAN_EXPORT_TREND_CACHE_PATH = Path(__file__).resolve().parent / "Data" / "taiwan_export_trend_cache.json"
+_ODS_NS = {
+    "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+    "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+}
+
+
 MARKET_DEFINITIONS = [MarketDefinition(label=name, ticker=ticker) for name, ticker in MARKETS]
 
 
@@ -2988,6 +3022,253 @@ def print_taifex_institutional_trader_snapshot(snapshot: TaifexInstitutionalTrad
         print(f"  外資方向: 多單 {snapshot.foreign_net:,} 口")
     print(f"  擷取時間: {snapshot.fetched_at_local}")
     print(f"  資料來源: {snapshot.data_source}")
+
+def _parse_taiwan_export_float(value: str) -> float:
+    cleaned = value.replace(',', '').replace('%', '').replace('?', '-').replace('?', '-').replace(' ', '').strip()
+    if not cleaned:
+        raise ValueError('empty numeric value')
+    return float(cleaned)
+
+
+
+def _read_ods_table_rows(table: ET.Element) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for row in table.findall('./table:table-row', _ODS_NS):
+        values: list[str] = []
+        for cell in row.findall('./table:table-cell', _ODS_NS):
+            repeat = int(cell.get(f"{{{_ODS_NS['table']}}}number-columns-repeated") or '1')
+            text = ''.join(cell.itertext()).replace(' ', ' ').strip()
+            for _ in range(repeat):
+                values.append(text)
+                if len(values) >= 9:
+                    break
+            if len(values) >= 9:
+                break
+        rows.append(values)
+    return rows
+
+
+
+def _extract_taiwan_export_month_rows(ods_blob: bytes) -> list[TaiwanExportTrendPoint]:
+    with zipfile.ZipFile(io.BytesIO(ods_blob)) as archive:
+        content = archive.read('content.xml')
+
+    root = ET.fromstring(content)
+    tables = root.findall('.//table:table', _ODS_NS)
+    target_table = None
+    for table in tables:
+        name = table.get(f"{{{_ODS_NS['table']}}}name", '')
+        if '二1我國整體進出口貿易' in name or '我國整體進出口貿易' in name:
+            target_table = table
+            break
+    if target_table is None:
+        raise RuntimeError('trade reference indicator table not found in ODS')
+
+    rows = _read_ods_table_rows(target_table)
+    current_year = None
+    monthly_rows: list[tuple[int, int, float, float]] = []
+    for row in rows:
+        if not row:
+            continue
+        label = row[0].strip()
+        year_match = re.match(r'^(\d+)年$', label)
+        if year_match:
+            current_year = int(year_match.group(1))
+            continue
+        month_match = re.match(r'^(\d+)月(?:\([^)]+\))?$', label)
+        if current_year is None or month_match is None:
+            continue
+        if len(row) < 5:
+            continue
+        month = int(month_match.group(1))
+        export_value = _parse_taiwan_export_float(row[3])
+        yoy_pct = _parse_taiwan_export_float(row[4])
+        monthly_rows.append((current_year, month, export_value, yoy_pct))
+
+    if len(monthly_rows) < 3:
+        raise RuntimeError('not enough monthly export rows found in ODS')
+
+    latest_rows = monthly_rows[-3:]
+    points = []
+    for roc_year, month, export_value, yoy_pct in latest_rows:
+        gregorian_year = roc_year + 1911
+        points.append(
+            TaiwanExportTrendPoint(
+                period_label=f'{gregorian_year}年{month}月',
+                export_value_billion_usd=export_value,
+                yoy_pct=yoy_pct,
+            )
+        )
+    return points
+
+
+
+def _load_taiwan_export_trend_cache() -> TaiwanExportTrendSnapshot | None:
+    if not TAIWAN_EXPORT_TREND_CACHE_PATH.exists():
+        return None
+    try:
+        payload = json.loads(TAIWAN_EXPORT_TREND_CACHE_PATH.read_text(encoding='utf-8'))
+        points = tuple(TaiwanExportTrendPoint(**item) for item in payload['points'])
+        return TaiwanExportTrendSnapshot(
+            article_title=payload['article_title'],
+            article_date=payload['article_date'],
+            points=points,
+            fetched_at_local=payload['fetched_at_local'],
+            fetched_at_utc=payload['fetched_at_utc'],
+            data_source=payload['data_source'],
+        )
+    except Exception:
+        return None
+
+
+
+def _save_taiwan_export_trend_cache(snapshot: TaiwanExportTrendSnapshot) -> None:
+    payload = {
+        'article_title': snapshot.article_title,
+        'article_date': snapshot.article_date,
+        'points': [asdict(point) for point in snapshot.points],
+        'fetched_at_local': snapshot.fetched_at_local,
+        'fetched_at_utc': snapshot.fetched_at_utc,
+        'data_source': snapshot.data_source,
+    }
+    TAIWAN_EXPORT_TREND_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TAIWAN_EXPORT_TREND_CACHE_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
+
+
+
+def _month_only(period_label: str) -> str:
+    return period_label.split('年', 1)[1] if '年' in period_label else period_label
+
+
+
+def _describe_taiwan_export_trend(points: tuple[TaiwanExportTrendPoint, ...]) -> str:
+    if len(points) < 3:
+        return '資料不足'
+    first, second, third = points[-3:]
+    middle_month = _month_only(second.period_label)
+    latest_month = _month_only(third.period_label)
+    middle_phrase = f'{middle_month}回落' if second.export_value_billion_usd < first.export_value_billion_usd else f'{middle_month}反彈'
+    if third.export_value_billion_usd > second.export_value_billion_usd:
+        latest_phrase = f'{latest_month}反彈' if second.export_value_billion_usd < first.export_value_billion_usd else f'{latest_month}繼強'
+    elif third.export_value_billion_usd < second.export_value_billion_usd:
+        latest_phrase = f'{latest_month}回落'
+    else:
+        latest_phrase = f'{latest_month}持平'
+    return f'{middle_phrase}、{latest_phrase}'
+
+
+
+def _format_taiwan_export_trend_summary(snapshot: TaiwanExportTrendSnapshot) -> str:
+    points = snapshot.points[-3:]
+    if len(points) < 3:
+        return '台灣出口資料不足。'
+    p1, p2, p3 = points
+    return (
+        f'台灣出口近三個月仍強：{p1.period_label} {p1.export_value_billion_usd:.2f} 億美元、年增 {p1.yoy_pct:.2f}%；'
+        f'{_month_only(p2.period_label)} {p2.export_value_billion_usd:.2f} 億美元、年增 {p2.yoy_pct:.2f}%；'
+        f'{_month_only(p3.period_label)} {p3.export_value_billion_usd:.2f} 億美元、年增 {p3.yoy_pct:.2f}%。'
+    )
+
+
+
+@lru_cache(maxsize=1)
+def fetch_taiwan_export_trend() -> TaiwanExportTrendSnapshot:
+    cache_snapshot = _load_taiwan_export_trend_cache()
+
+    params = {
+        'nodeID': '1374',
+        'keyword': '',
+        'calendarTo': '',
+        'calendarFrom': '',
+        'history': 'y',
+        'datatime': 'all',
+        'pageindex': '1',
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Referer': 'https://www.trade.gov.tw/Pages/List.aspx?nodeID=1374',
+    }
+
+    last_error: Exception | None = None
+    for attempt in range(1, 4):
+        try:
+            response = requests.get(TAIWAN_EXPORT_REFERENCE_LIST_URL, params=params, headers=headers, timeout=45)
+            response.raise_for_status()
+            payload = response.json()
+            html_payload = payload.get('Html') or ''
+            matches = re.findall(r'<a href="([^"]+)" title="([^"]+)">([^<]+)</a>', html_payload)
+            if not matches:
+                raise RuntimeError('trade reference indicator list is empty')
+
+            latest_article_title = unescape(matches[0][1]).replace('\xa0', ' ').strip()
+            if cache_snapshot is not None and cache_snapshot.article_title == latest_article_title:
+                return cache_snapshot
+
+
+            detail_href = matches[0][0]
+            detail_url = urljoin(TAIWAN_EXPORT_REFERENCE_BASE_URL, detail_href)
+            detail_response = requests.get(detail_url, headers=headers, timeout=45)
+            detail_response.raise_for_status()
+            detail_html = detail_response.text
+
+            title_match = re.search(r'<h2 class="tender-title">\s*(.*?)\s*</h2>', detail_html, re.S)
+            date_match = re.search(r'<span class="date">\s*([0-9-]+)\s*</span>', detail_html, re.S)
+            if not title_match or not date_match:
+                raise RuntimeError('trade reference indicator detail page is missing the expected article header')
+
+            article_title = unescape(title_match.group(1)).replace(' ', ' ').strip()
+            article_date = date_match.group(1).strip()
+            attachment_hrefs = re.findall(r"href=[\"'](?P<href>/App_Ashx/File\.ashx\?FileID=[^\"']+)[\"']", detail_html, re.S)
+            if not attachment_hrefs:
+                raise RuntimeError('trade reference indicator detail page is missing downloadable attachments')
+
+            for attachment_href in attachment_hrefs:
+                attachment_url = urljoin(TAIWAN_EXPORT_REFERENCE_BASE_URL, attachment_href)
+                ods_response = requests.get(attachment_url, headers=headers, timeout=60)
+                ods_response.raise_for_status()
+                try:
+                    points = tuple(_extract_taiwan_export_month_rows(ods_response.content))
+                except Exception:
+                    last_error = sys.exc_info()[1]
+                    continue
+
+                snapshot = TaiwanExportTrendSnapshot(
+                    article_title=article_title,
+                    article_date=article_date,
+                    points=points,
+                    fetched_at_local=datetime.now(ZoneInfo('Asia/Taipei')).isoformat(timespec='seconds'),
+                    fetched_at_utc=datetime.now(timezone.utc).isoformat(timespec='seconds'),
+                    data_source=f'{article_title} | trade.gov.tw reference indicator attachment',
+                )
+                _save_taiwan_export_trend_cache(snapshot)
+                return snapshot
+
+            raise RuntimeError('no downloadable attachment on the trade reference indicator page produced an export table')
+        except Exception as exc:
+            last_error = exc
+            if attempt >= 3:
+                break
+            delay_seconds = min(2 ** (attempt - 1), 5)
+            print(f'[WARN] Taiwan export trend fetch attempt {attempt}/3 failed: {exc}; retrying in {delay_seconds}s...', file=sys.stderr)
+            time.sleep(delay_seconds)
+
+    if cache_snapshot is not None:
+        return cache_snapshot
+    raise RuntimeError('Taiwan export trend fetch failed') from last_error
+
+
+
+def print_taiwan_export_trend_snapshot(snapshot: TaiwanExportTrendSnapshot) -> None:
+    print('【台灣出口近三月】')
+    print(f'  來源: {snapshot.article_title} | {snapshot.article_date}')
+    summary_line = _format_taiwan_export_trend_summary(snapshot)
+    print(f'  摘要: {summary_line}')
+    trend_desc = _describe_taiwan_export_trend(snapshot.points)
+    print(f'  月度趨勢: {trend_desc}')
+    print(f'  發布日: {snapshot.article_date}')
+    print(f'  資料來源: {snapshot.data_source}')
+
 
 def fetch_vietnam_index_via_hose(session: requests.Session) -> tuple[float, float, float]:
 

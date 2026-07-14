@@ -1,0 +1,24 @@
+{
+  "article_title": "中華民國貿易統計重要參考指標(民國115年5月)",
+  "article_date": "2026-06-16",
+  "points": [
+    {
+      "period_label": "2026年3月",
+      "export_value_billion_usd": 802.0,
+      "yoy_pct": 61.85
+    },
+    {
+      "period_label": "2026年4月",
+      "export_value_billion_usd": 676.0,
+      "yoy_pct": 39.0
+    },
+    {
+      "period_label": "2026年5月",
+      "export_value_billion_usd": 785.0,
+      "yoy_pct": 51.68
+    }
+  ],
+  "fetched_at_local": "2026-07-14T14:36:44+08:00",
+  "fetched_at_utc": "2026-07-14T06:36:44+00:00",
+  "data_source": "中華民國貿易統計重要參考指標(民國115年5月) | trade.gov.tw reference indicator attachment"
+}
