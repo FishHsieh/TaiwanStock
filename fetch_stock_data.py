@@ -83,6 +83,8 @@ from bot_database import count_active_symbols, ensure_database, load_active_symb
 
 
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 
@@ -1321,6 +1323,7 @@ class MarketSnapshot:
 
 
     session_state: str
+    data_date: str
 
 
 
@@ -1950,112 +1953,69 @@ def get_session_state_for_kind(market_kind: str, now_taipei: Optional[datetime] 
 
 def ensure_cache_database() -> None:
 
-
-
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
-
-
 
     with sqlite3.connect(MARKET_CACHE_DB, timeout=30) as connection:
 
-
-
         connection.execute("PRAGMA journal_mode=WAL")
-
-
 
         connection.execute(
 
-
-
             """
-
-
 
             CREATE TABLE IF NOT EXISTS latest_market_snapshot (
 
-
-
                 ticker TEXT PRIMARY KEY,
-
-
 
                 label TEXT NOT NULL,
 
-
-
                 market_kind TEXT NOT NULL,
-
-
 
                 session_state TEXT NOT NULL,
 
-
-
                 price REAL NOT NULL,
-
-
 
                 change_value REAL NOT NULL,
 
-
-
                 pct REAL NOT NULL,
-
-
 
                 volume REAL,
 
-
-
                 previous_volume REAL,
-
-
 
                 avg5_volume REAL,
 
-
-
+                data_date TEXT NOT NULL,
                 fetched_at_local TEXT NOT NULL,
-
-
 
                 fetched_at_utc TEXT NOT NULL,
 
-
-
                 data_source TEXT NOT NULL
-
-
 
             )
 
-
-
             """
-
-
 
         )
 
-
-
-
-
-
-
-
-
-
+        existing_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(latest_market_snapshot)")
+        }
+        if "data_date" not in existing_columns:
+            connection.execute("ALTER TABLE latest_market_snapshot ADD COLUMN data_date TEXT")
 
 def row_to_snapshot(row: sqlite3.Row) -> MarketSnapshot:
 
 
 
+    data_date = row["data_date"] if "data_date" in row.keys() else None
+    if data_date in (None, ""):
+        data_date = str(row["fetched_at_local"])[:10].replace("-", "/")
+
+
+
+
     return MarketSnapshot(
-
-
-
         label=str(row["label"]),
 
 
@@ -2069,6 +2029,7 @@ def row_to_snapshot(row: sqlite3.Row) -> MarketSnapshot:
 
 
         session_state=str(row["session_state"]),
+        data_date=str(data_date),
 
 
 
@@ -2204,11 +2165,11 @@ def store_snapshot(snapshot: MarketSnapshot) -> None:
 
 
 
-                volume, previous_volume, avg5_volume, fetched_at_local, fetched_at_utc, data_source
+                volume, previous_volume, avg5_volume, data_date, fetched_at_local, fetched_at_utc, data_source
 
 
 
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
 
 
@@ -2257,6 +2218,7 @@ def store_snapshot(snapshot: MarketSnapshot) -> None:
 
 
                 fetched_at_utc = excluded.fetched_at_utc,
+                data_date = excluded.data_date,
 
 
 
@@ -2309,6 +2271,7 @@ def store_snapshot(snapshot: MarketSnapshot) -> None:
 
 
                 snapshot.avg5_volume,
+                snapshot.data_date,
 
 
 
@@ -2342,7 +2305,7 @@ def store_snapshot(snapshot: MarketSnapshot) -> None:
 
 
 def store_daily_ohlcv_snapshot(snapshot: MarketSnapshot) -> None:
-    trade_date = str(snapshot.fetched_at_local or "")[:10]
+    trade_date = str(snapshot.data_date or snapshot.fetched_at_local or "")[:10].replace("/", "-")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", trade_date):
         trade_date = datetime.now(TAIPEI_TZ).strftime("%Y-%m-%d")
     upsert_daily_ohlcv(
@@ -2717,6 +2680,480 @@ def fetch_yahoo_margin_balance(session: Optional[requests.Session] = None) -> Ma
         fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
         data_source="live-yahoo",
     )
+
+
+
+
+
+def _parse_twse_roc_date(value: str) -> str:
+
+
+
+    parts = str(value).strip().split("/")
+
+
+
+    if len(parts) != 3:
+
+
+
+        raise ValueError(f"Unexpected TWSE ROC date: {value!r}")
+
+
+
+    roc_year, month, day = (int(part) for part in parts)
+
+
+
+    return f"{roc_year + 1911:04d}/{month:02d}/{day:02d}"
+
+
+
+
+
+
+
+def _parse_twse_number(value: str) -> float:
+
+
+
+    text = str(value).replace(",", "").strip()
+
+
+
+    if text in {"", "-", "--"}:
+
+
+
+        raise ValueError(f"Unexpected TWSE numeric value: {value!r}")
+
+
+
+    return float(text)
+
+
+
+
+
+
+
+def fetch_twse_taiex_snapshot(
+
+
+
+    session: requests.Session,
+
+
+
+    label: str,
+
+
+
+    ticker_symbol: str,
+
+
+
+    market_kind: str,
+
+
+
+    session_state: str,
+
+
+
+) -> MarketSnapshot:
+
+
+
+    query_date = datetime.now(TAIPEI_TZ).strftime("%Y%m%d")
+
+
+
+    url = f"https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date={query_date}"
+
+
+
+    data = fetch_json_with_retry(session, url, timeout=15, retries=4)
+
+
+
+    rows = data.get("data") or []
+
+
+
+    parsed_rows = []
+
+
+
+    for row in rows:
+
+
+
+        if not isinstance(row, list) or len(row) < 6:
+
+
+
+            continue
+
+
+
+        try:
+
+
+
+            data_date = _parse_twse_roc_date(row[0])
+
+
+
+            volume = _parse_twse_number(row[1])
+
+
+
+            price = _parse_twse_number(row[4])
+
+
+
+            change = _parse_twse_number(row[5])
+
+
+
+        except (TypeError, ValueError):
+
+
+
+            continue
+
+
+
+        parsed_rows.append((data_date, volume, price, change))
+
+
+
+    if not parsed_rows:
+
+
+
+        raise RuntimeError("TWSE returned no market index history")
+
+
+
+    latest_date, latest_volume, latest_price, latest_change = parsed_rows[-1]
+
+
+
+    volume_history = [row[1] for row in parsed_rows]
+
+
+
+    local_now = datetime.now(TAIPEI_TZ)
+
+
+
+    if session_state == "\u6536\u76e4":
+
+
+
+        previous_volume = parsed_rows[-2][1] if len(parsed_rows) >= 2 else None
+
+
+
+        prior_volume_history = volume_history[:-1]
+
+
+
+        avg5_volume = float(mean(prior_volume_history[-5:])) if prior_volume_history else None
+
+
+
+        prev_close = latest_price - latest_change
+
+
+
+        pct = (latest_change / prev_close * 100) if prev_close else 0.0
+
+
+
+        return MarketSnapshot(
+
+
+
+            label=label,
+
+
+
+            ticker=ticker_symbol,
+
+
+
+            market_kind=market_kind,
+
+
+
+            session_state=session_state,
+
+
+
+            data_date=latest_date,
+
+
+
+            price=latest_price,
+
+
+
+            change=latest_change,
+
+
+
+            pct=pct,
+
+
+
+            volume=latest_volume,
+
+
+
+            previous_volume=previous_volume,
+
+
+
+            avg5_volume=avg5_volume,
+
+
+
+            fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
+
+
+
+            fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+
+
+
+            data_source="live-twse",
+
+
+
+        )
+
+
+
+    yahoo_snapshot = fetch_yahoo_snapshot(session, label, ticker_symbol, market_kind, session_state)
+
+
+
+    prev_close = latest_price
+
+
+
+    price = float(yahoo_snapshot.price)
+
+
+
+    change = price - prev_close
+
+
+
+    pct = (change / prev_close * 100) if prev_close else 0.0
+
+
+
+    current_volume = yahoo_snapshot.volume
+
+
+
+    if current_volume in (None, "", 0):
+
+
+
+        current_volume = None
+
+
+
+    previous_volume = latest_volume
+
+
+
+    avg5_volume = float(mean(volume_history[-5:])) if volume_history else None
+
+
+
+    return replace(
+
+
+
+        yahoo_snapshot,
+
+
+
+        price=price,
+
+
+
+        change=change,
+
+
+
+        pct=pct,
+
+
+
+        volume=current_volume,
+
+
+
+        previous_volume=previous_volume,
+
+
+
+        avg5_volume=avg5_volume,
+
+
+
+        data_source="live-twse-yahoo",
+
+
+
+    )
+
+
+
+
+def fetch_tpex_otc_snapshot(
+
+    session: requests.Session,
+
+    label: str,
+
+    ticker_symbol: str,
+
+    market_kind: str,
+
+    session_state: str,
+
+) -> MarketSnapshot:
+
+    url = "https://www.tpex.org.tw/www/zh-tw/indexInfo/inx"
+
+    headers = {
+        "User-Agent": YAHOO_HEADERS["User-Agent"],
+        "Accept": "application/json, text/plain, */*",
+    }
+
+    data = None
+
+    last_error: Exception | None = None
+
+    for attempt in range(1, 5):
+        try:
+            response = session.get(url, headers=headers, timeout=15, verify=False)
+            response.raise_for_status()
+            data = response.json()
+            break
+        except requests.exceptions.Timeout as exc:
+            last_error = exc
+        except requests.exceptions.RequestException as exc:
+            last_error = exc
+
+        if attempt >= 4:
+            break
+
+        delay_seconds = min(2 ** (attempt - 1), 5)
+        print(f"[TPEx OTC] request failed on attempt {attempt}/4; retrying in {delay_seconds}s...")
+        time.sleep(delay_seconds)
+
+    if data is None:
+        raise RuntimeError(f"TPEx OTC index request failed after 4 attempts") from last_error
+
+    tables = data.get("tables") or []
+    if not tables:
+        raise RuntimeError("TPEx returned no market index history")
+
+    rows = tables[0].get("data") or []
+    parsed_rows: list[tuple[str, float, float]] = []
+    for row in rows:
+        if not isinstance(row, list) or len(row) < 6:
+            continue
+        try:
+            data_date = str(row[0]).strip()
+            price = _parse_twse_number(row[4])
+            change = _parse_twse_number(row[5])
+        except (TypeError, ValueError):
+            continue
+        parsed_rows.append((data_date, price, change))
+
+    if not parsed_rows:
+        raise RuntimeError("TPEx returned no usable market index history")
+
+    latest_date, latest_price, latest_change = parsed_rows[-1]
+    prev_close = latest_price - latest_change
+    pct = (latest_change / prev_close * 100) if prev_close else 0.0
+    local_now = datetime.now(TAIPEI_TZ)
+
+    if session_state == "收盤":
+        return MarketSnapshot(
+            label=label,
+            ticker=ticker_symbol,
+            market_kind=market_kind,
+            session_state=session_state,
+            data_date=latest_date,
+            price=latest_price,
+            change=latest_change,
+            pct=pct,
+            volume=None,
+            previous_volume=None,
+            avg5_volume=None,
+            fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
+            fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            data_source="live-tpex",
+        )
+
+    yahoo_snapshot: MarketSnapshot | None = None
+    try:
+        yahoo_snapshot = fetch_yahoo_snapshot(session, label, ticker_symbol, market_kind, session_state)
+    except Exception:
+        yahoo_snapshot = None
+
+    if yahoo_snapshot is not None and latest_price:
+        yahoo_price = float(yahoo_snapshot.price)
+        if abs(yahoo_price - latest_price) / latest_price > 0.25:
+            yahoo_snapshot = None
+
+    if yahoo_snapshot is None:
+        return MarketSnapshot(
+            label=label,
+            ticker=ticker_symbol,
+            market_kind=market_kind,
+            session_state=session_state,
+            data_date=latest_date,
+            price=latest_price,
+            change=latest_change,
+            pct=pct,
+            volume=None,
+            previous_volume=None,
+            avg5_volume=None,
+            fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
+            fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            data_source="live-tpex",
+        )
+
+    current_price = float(yahoo_snapshot.price)
+    change = current_price - latest_price
+    pct = (change / latest_price * 100) if latest_price else 0.0
+    current_volume = yahoo_snapshot.volume
+    if current_volume in (None, "", 0):
+        current_volume = None
+
+    return replace(
+        yahoo_snapshot,
+        data_date=latest_date,
+        price=current_price,
+        change=change,
+        pct=pct,
+        volume=current_volume,
+        data_source="live-tpex-yahoo",
+    )
+
+
 def fetch_yahoo_snapshot(
 
 
@@ -2963,6 +3400,8 @@ def fetch_yahoo_snapshot(
 
 
 
+        data_date=local_now.strftime("%Y/%m/%d"),
+
         price=price,
 
 
@@ -3010,7 +3449,7 @@ def print_taifex_institutional_trader_snapshot(snapshot: TaifexInstitutionalTrad
         return f"+{value:,}" if value >= 0 else f"{value:,}"
 
     print("台指期貨法人未平倉淨部位（快取）")
-    print(f"  數據日期: {snapshot.asof_date}")
+    print(f"  資料日期: {snapshot.asof_date}")
     print(f"  外資: {snapshot.foreign_net:,} ({signed(snapshot.foreign_change)})")
     print(f"  小外資: {snapshot.small_foreign_net:,} ({signed(snapshot.small_foreign_change)})")
     print(f"  投信: {snapshot.investment_trust_net:,} ({signed(snapshot.investment_trust_change)})")
@@ -3266,7 +3705,7 @@ def print_taiwan_export_trend_snapshot(snapshot: TaiwanExportTrendSnapshot) -> N
     print(f'  摘要: {summary_line}')
     trend_desc = _describe_taiwan_export_trend(snapshot.points)
     print(f'  月度趨勢: {trend_desc}')
-    print(f'  發布日: {snapshot.article_date}')
+    print(f'  資料日期: {snapshot.article_date}')
     print(f'  資料來源: {snapshot.data_source}')
 
 
@@ -3638,6 +4077,8 @@ def fetch_vietnam_snapshot(
 
 
 
+            data_date=local_now.strftime("%Y/%m/%d"),
+
             price=current_price,
 
 
@@ -3756,7 +4197,13 @@ def fetch_market_snapshot_live(
 
             return fetch_vietnam_snapshot(session, label, ticker_symbol, market_kind, session_state)
 
+        if ticker_symbol == "^TWOII":
 
+            return fetch_tpex_otc_snapshot(session, label, ticker_symbol, market_kind, session_state)
+
+        if ticker_symbol == "^TWII":
+
+            return fetch_twse_taiex_snapshot(session, label, ticker_symbol, market_kind, session_state)
 
         return fetch_yahoo_snapshot(session, label, ticker_symbol, market_kind, session_state)
 
@@ -4027,6 +4474,7 @@ def print_market_snapshot(snapshot: MarketSnapshot) -> None:
 
 
     print(f"  交易狀態: {snapshot.session_state}")
+    print(f"  資料日期: {snapshot.data_date}")
 
 
 
@@ -4093,8 +4541,7 @@ def print_margin_balance_snapshot(snapshot: MarginBalanceSnapshot) -> None:
     print("【Yahoo 融資融券】")
 
 
-
-    print(f"  日期: {snapshot.asof_date}")
+    print(f"  資料日期: {snapshot.asof_date}")
 
 
 

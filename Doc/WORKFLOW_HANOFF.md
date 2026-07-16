@@ -1,6 +1,6 @@
 # TaiwanStockBot Workflow Handoff
 
-Last updated: 2026-07-09
+Last updated: 2026-07-15
 
 ## Purpose
 
@@ -10,6 +10,9 @@ This project generates a daily market report, publishes it as HTML, syncs it to 
 
 Use this section as the durable record of what has already been finished. Check it before repeating work.
 
+- 2026-07-15: Full report flow reran successfully via `run_bot.ps1`; generated `Reports\Report_20260715_1411.html`, wrote transcript `Reports\run_bot_20260715_140705.log`, and emailed `vinson_hsieh@cyberlink.com`.
+- 2026-07-15: The repository was committed and pushed to `origin/main` at `597f4cefbb8336d6e69e1e8cbefda64bbf353651`; working tree was clean after the push.
+- 2026-07-15: The current session handoff state is now recorded here so the next run can continue from the latest working report pipeline without re-deriving the same fixes.
 - 2026-07-07: Web report auto-refresh is now 5 seconds, with an immediate first check on load.
 - 2026-07-07: Individual Taiwan stocks now include the latest monthly revenue and YoY revenue growth when available.
 - 2026-07-07: ETFs and indices skip the monthly revenue field instead of showing misleading blanks.
@@ -175,10 +178,11 @@ The canonical source sheet is:
 
 When continuing next time:
 
+1. Start from `F:\TaiwanStockBot` and run `run_bot.ps1` for the full pipeline.
+1. Confirm the latest `Reports\Report_*.html` and `Reports\run_bot_*.log`.
+1. Check whether `origin/main` still points to `597f4cefbb8336d6e69e1e8cbefda64bbf353651` before making new changes.
 1. Add/update symbols through `manage_symbols.py` and verify `symbol_master`; avoid editing prompt-only ticker lists.
-1. Run `run_bot.ps1` and let it bootstrap `.venv`, `tools\nodejs`, and local `node_modules` if needed.
 1. Confirm `market_data.txt`, `sheet_trade_context.json`, and `final_article.txt`.
-1. Verify the latest `Reports\Report_*.html`.
 1. Check Firebase deployment status if the site should be public.
 1. Confirm email delivery if needed.
 
