@@ -1,6 +1,6 @@
 # TaiwanStockBot Workflow Handoff
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 ## Purpose
 
@@ -9,6 +9,11 @@ This project generates a daily market report, publishes it as HTML, syncs it to 
 ## Completed Log
 
 Use this section as the durable record of what has already been finished. Check it before repeating work.
+
+- 2026-07-16: `^TWOII` now uses the official TPEx `indexInfo/inx` source instead of Yahoo, so the OTC index closes and day-over-day change are no longer distorted by the Yahoo fallback.
+- 2026-07-16: Re-ran the full pipeline after the OTC fix; generated `Reports\Report_20260716_1022.html` and `Reports\final_article_20260716_101814.txt`.
+- 2026-07-16: The repository was committed and pushed to `origin/main` at `4b5c1f1`; working tree was clean after the push.
+- 2026-07-16: The latest session state is now recorded here so the next run can continue from the current report pipeline without re-deriving the OTC fix.
 
 - 2026-07-15: Full report flow reran successfully via `run_bot.ps1`; generated `Reports\Report_20260715_1411.html`, wrote transcript `Reports\run_bot_20260715_140705.log`, and emailed `vinson_hsieh@cyberlink.com`.
 - 2026-07-15: The repository was committed and pushed to `origin/main` at `597f4cefbb8336d6e69e1e8cbefda64bbf353651`; working tree was clean after the push.
