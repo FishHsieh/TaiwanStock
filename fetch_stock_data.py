@@ -1,4 +1,5 @@
 import sys
+import calendar
 
 
 
@@ -18,7 +19,7 @@ import re
 
 
 
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from html import unescape
 
@@ -52,7 +53,7 @@ from statistics import mean
 
 
 
-from typing import Optional
+from typing import Any, Optional
 
 
 
@@ -66,7 +67,7 @@ from zoneinfo import ZoneInfo
 
 from urllib.parse import quote, urljoin
 
-from bot_database import count_active_symbols, ensure_database, load_active_symbols, load_latest_institutional_futures_snapshot, seed_category_master, upsert_daily_ohlcv, upsert_institutional_futures_snapshot, upsert_symbol
+from bot_database import count_active_symbols, ensure_database, load_active_symbols, load_corporate_announcements, load_latest_institutional_futures_snapshot, load_latest_source_fetch_log, log_source_fetch, seed_category_master, upsert_corporate_announcement, upsert_daily_ohlcv, upsert_institutional_futures_snapshot, upsert_symbol
 
 
 
@@ -1488,6 +1489,18 @@ class TaiwanExportTrendSnapshot:
 TAIWAN_EXPORT_REFERENCE_LIST_URL = "https://www.trade.gov.tw/App_Ashx/getDataByNodeid.ashx"
 TAIWAN_EXPORT_REFERENCE_BASE_URL = "https://www.trade.gov.tw"
 TAIWAN_EXPORT_TREND_CACHE_PATH = Path(__file__).resolve().parent / "Data" / "taiwan_export_trend_cache.json"
+MOPS_HISTORICAL_MAJOR_ANNOUNCEMENTS_URL = "https://mops.twse.com.tw/mops/api/t05st01"
+MOPS_ANNOUNCEMENT_SOURCE = "MOPS t05st01"
+MOPS_ANNOUNCEMENT_LOOKBACK_DAYS = 30
+MOPS_ANNOUNCEMENT_MAX_WORKERS = 5
+MOPS_ANNOUNCEMENT_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Origin': 'https://mops.twse.com.tw',
+    'Referer': 'https://mops.twse.com.tw/mops/',
+}
+LAW_MEETING_KEYWORDS = ('法說', '法人說明會')
+FOLLOWED_EQUITY_ASSET_TYPES = {'stock', 'financial'}
 _ODS_NS = {
     "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
     "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
@@ -2784,6 +2797,300 @@ def _parse_twse_number(value: str) -> float:
 
 
 
+def _split_date_windows(start_date: date, end_date: date) -> list[tuple[date, date]]:
+    windows: list[tuple[date, date]] = []
+    cursor = start_date
+    while cursor <= end_date:
+        month_last_day = calendar.monthrange(cursor.year, cursor.month)[1]
+        window_end = min(end_date, date(cursor.year, cursor.month, month_last_day))
+        windows.append((cursor, window_end))
+        cursor = window_end + timedelta(days=1)
+    return windows
+
+
+
+def _roc_date_to_iso(roc_date_text: str) -> str:
+    return _parse_twse_roc_date(roc_date_text).replace('/', '-')
+
+
+
+def _is_law_meeting_title(title: str) -> bool:
+    normalized = str(title or '').strip()
+    return any(keyword in normalized for keyword in LAW_MEETING_KEYWORDS)
+
+
+
+def _post_json_with_retry(
+    session: requests.Session,
+    url: str,
+    payload: dict[str, Any],
+    *,
+    timeout: int = 30,
+    retries: int = 4,
+) -> dict[str, Any]:
+    last_error: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            response = session.post(
+                url,
+                json=payload,
+                headers=MOPS_ANNOUNCEMENT_HEADERS,
+                timeout=timeout,
+                verify=False,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as exc:
+            status_code = getattr(exc.response, 'status_code', None)
+            if status_code is not None and int(status_code) < 500:
+                raise
+            last_error = exc
+        except (requests.exceptions.RequestException, ValueError) as exc:
+            last_error = exc
+
+        if attempt < retries:
+            time.sleep(min(2 ** (attempt - 1), 5))
+
+    raise RuntimeError(f"MOPS historical major announcement request failed after {retries} attempts") from last_error
+
+
+
+def _fetch_mops_company_announcements(
+    session: requests.Session,
+    symbol: str,
+    company_id: str,
+    window_start: date,
+    window_end: date,
+) -> list[dict[str, Any]]:
+    payload = {
+        'companyId': company_id,
+        'year': str(window_start.year - 1911),
+        'month': str(window_start.month),
+        'firstDay': str(window_start.day),
+        'lastDay': str(window_end.day),
+    }
+    response_payload = _post_json_with_retry(
+        session,
+        MOPS_HISTORICAL_MAJOR_ANNOUNCEMENTS_URL,
+        payload,
+        timeout=30,
+        retries=4,
+    )
+
+    try:
+        response_code = int(response_payload.get('code') or 0)
+    except (TypeError, ValueError):
+        response_code = 0
+
+    if response_code == 406:
+        return []
+
+    if response_code != 200:
+        message = str(response_payload.get('message') or 'unknown error')
+        raise RuntimeError(f"MOPS t05st01 returned code {response_code}: {message}")
+
+    result = response_payload.get('result') or {}
+    market_name = str(result.get('marketName') or '').strip() or None
+    fetched_at_local = datetime.now(TAIPEI_TZ).isoformat(timespec='seconds')
+    announcements: list[dict[str, Any]] = []
+
+    for row in result.get('data') or []:
+        if not isinstance(row, list) or len(row) < 5:
+            continue
+
+        row_company_id = str(row[0] or '').strip() or company_id
+        company_name = str(row[1] or '').strip()
+        event_date_roc = str(row[2] or '').strip()
+        if not row_company_id or not company_name or not event_date_roc:
+            continue
+
+        event_time = str(row[3] or '').strip() or None
+        title = str(row[4] or '').strip()
+        if not title:
+            continue
+
+        detail_api_name = None
+        detail_params_json = None
+        if len(row) > 5 and isinstance(row[5], dict):
+            detail = row[5]
+            detail_api_name = str(detail.get('apiName') or '').strip() or None
+            parameters = detail.get('parameters')
+            if parameters is not None:
+                detail_params_json = json.dumps(parameters, ensure_ascii=False, default=str)
+
+        announcements.append(
+            {
+                'event_key': f"{symbol}|{event_date_roc}|{event_time or ''}|{title}",
+                'symbol': symbol,
+                'company_id': row_company_id,
+                'company_name': company_name,
+                'market_name': market_name,
+                'event_date': _roc_date_to_iso(event_date_roc),
+                'event_date_roc': event_date_roc,
+                'event_time': event_time,
+                'title': title,
+                'source': MOPS_ANNOUNCEMENT_SOURCE,
+                'detail_api_name': detail_api_name,
+                'detail_params_json': detail_params_json,
+                'fetched_at': fetched_at_local,
+            }
+        )
+
+    return announcements
+
+
+
+def _sync_mops_corporate_announcements_for_symbol(
+    symbol_row: dict[str, Any],
+    start_date: date,
+    end_date: date,
+    reference_now: datetime,
+) -> None:
+    symbol = str(symbol_row.get('symbol') or '').strip()
+    if not symbol:
+        return
+
+    company_id = symbol.split('.')[0]
+    today_text = reference_now.strftime('%Y-%m-%d')
+
+    with requests.Session() as session:
+        for window_start, window_end in _split_date_windows(start_date, end_date):
+            asof_key = f"{window_start.isoformat()}:{window_end.isoformat()}"
+            latest_fetch = load_latest_source_fetch_log(
+                MOPS_ANNOUNCEMENT_SOURCE,
+                symbol,
+                asof_key=asof_key,
+            )
+            if (
+                latest_fetch
+                and str(latest_fetch.get('status') or '').lower() == 'success'
+                and str(latest_fetch.get('fetched_at') or '').startswith(today_text)
+            ):
+                continue
+
+            try:
+                announcements = _fetch_mops_company_announcements(
+                    session,
+                    symbol,
+                    company_id,
+                    window_start,
+                    window_end,
+                )
+                for announcement in announcements:
+                    upsert_corporate_announcement(**announcement)
+                log_source_fetch(
+                    MOPS_ANNOUNCEMENT_SOURCE,
+                    symbol,
+                    'success',
+                    asof_key=asof_key,
+                )
+            except Exception as exc:
+                log_source_fetch(
+                    MOPS_ANNOUNCEMENT_SOURCE,
+                    symbol,
+                    'error',
+                    asof_key=asof_key,
+                    error_message=str(exc),
+                )
+                print(
+                    f"[WARN] {symbol} MOPS 法說公告抓取失敗 ({window_start.isoformat()}~{window_end.isoformat()}): {exc}",
+                    file=sys.stderr,
+                )
+
+
+
+def _build_recent_corporate_announcements_summary(reference_now: datetime) -> dict[str, Any]:
+    lookback_end = reference_now.date()
+    lookback_start = lookback_end - timedelta(days=MOPS_ANNOUNCEMENT_LOOKBACK_DAYS)
+    followed_rows = []
+    for row in load_active_symbols():
+        symbol = str(row.get('symbol') or '').strip()
+        code = symbol.split('.')[0]
+        if row.get('market') != 'taiwan':
+            continue
+        if row.get('asset_type') not in FOLLOWED_EQUITY_ASSET_TYPES:
+            continue
+        if code.startswith('00'):
+            continue
+        followed_rows.append(row)
+
+    if followed_rows:
+        max_workers = min(MOPS_ANNOUNCEMENT_MAX_WORKERS, len(followed_rows))
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(
+                    _sync_mops_corporate_announcements_for_symbol,
+                    row,
+                    lookback_start,
+                    lookback_end,
+                    reference_now,
+                )
+                for row in followed_rows
+            ]
+            for future in as_completed(futures):
+                try:
+                    future.result()
+                except Exception as exc:
+                    print(f"[WARN] MOPS ????????: {exc}", file=sys.stderr)
+
+    active_symbols = {row['symbol'] for row in followed_rows}
+    raw_rows = load_corporate_announcements(
+        start_date=lookback_start.isoformat(),
+        end_date=lookback_end.isoformat(),
+    )
+    filtered_rows = [
+        row
+        for row in raw_rows
+        if row.get('symbol') in active_symbols and _is_law_meeting_title(str(row.get('title') or ''))
+    ]
+
+    counts: dict[str, int] = {}
+    latest_rows: dict[str, dict[str, Any]] = {}
+    for row in filtered_rows:
+        symbol = str(row.get('symbol') or '').strip()
+        if not symbol:
+            continue
+        counts[symbol] = counts.get(symbol, 0) + 1
+        current_key = (str(row.get('event_date') or ''), str(row.get('event_time') or ''))
+        existing = latest_rows.get(symbol)
+        if existing is None or current_key > (str(existing.get('event_date') or ''), str(existing.get('event_time') or '')):
+            latest_rows[symbol] = row
+
+    summary_rows: list[dict[str, Any]] = []
+    for symbol, row in latest_rows.items():
+        summary_rows.append(
+            {
+                'symbol': symbol,
+                'company_id': str(row.get('company_id') or symbol.split('.')[0]),
+                'company_name': str(row.get('company_name') or '').strip(),
+                'market_name': str(row.get('market_name') or '').strip() or None,
+                'event_date': str(row.get('event_date') or '').strip(),
+                'event_time': str(row.get('event_time') or '').strip() or None,
+                'title': str(row.get('title') or '').strip(),
+                'count': counts.get(symbol, 0),
+            }
+        )
+
+    summary_rows.sort(
+        key=lambda row: (
+            row['event_date'],
+            row['event_time'] or '',
+            row['company_id'],
+        ),
+        reverse=True,
+    )
+
+    return {
+        'lookback_start': lookback_start,
+        'lookback_end': lookback_end,
+        'tracked_count': len(followed_rows),
+        'matched_symbol_count': len(summary_rows),
+        'matched_announcement_count': len(filtered_rows),
+        'rows': summary_rows,
+    }
+
+
+
 def fetch_twse_taiex_snapshot(
 
 
@@ -3756,6 +4063,44 @@ def print_taiwan_export_trend_snapshot(snapshot: TaiwanExportTrendSnapshot) -> N
     print(f'  月度趨勢: {trend_desc}')
     print(f'  資料日期: {snapshot.article_date}')
     print(f'  資料來源: {snapshot.data_source}')
+
+
+def print_recent_corporate_announcements_section(reference_now: datetime) -> None:
+    summary: dict[str, Any] = {
+        'lookback_start': reference_now.date() - timedelta(days=MOPS_ANNOUNCEMENT_LOOKBACK_DAYS),
+        'lookback_end': reference_now.date(),
+        'tracked_count': 0,
+        'matched_symbol_count': 0,
+        'matched_announcement_count': 0,
+        'rows': [],
+    }
+
+    try:
+        summary = _build_recent_corporate_announcements_summary(reference_now)
+    except Exception as exc:
+        print(f"[WARN] MOPS 法說公告區塊生成失敗: {exc}", file=sys.stderr)
+
+    lookback_start = summary['lookback_start']
+    lookback_end = summary['lookback_end']
+    rows = summary['rows']
+
+    print('【最近一個月法說會公告】')
+    print(f"  觀察期間: {lookback_start.isoformat()} ~ {lookback_end.isoformat()}")
+    print(f"  追蹤範圍: 台股股票/金融股 {summary['tracked_count']} 檔")
+
+    if not rows:
+        print('  命中標的: 無')
+    else:
+        print(f"  命中標的: {summary['matched_symbol_count']} 檔 / {summary['matched_announcement_count']} 筆")
+        for row in rows:
+            code = str(row.get('symbol') or '').split('.')[0]
+            event_time = str(row.get('event_time') or '').strip() or '--:--:--'
+            count_suffix = f" ({row.get('count', 0)}筆)" if int(row.get('count', 0) or 0) > 1 else ''
+            print(f"  {code} {row.get('company_name')}{count_suffix} | {row.get('event_date')} {event_time} | {row.get('title')}")
+
+    print(f"  擷取時間: {reference_now.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"  資料來源: {MOPS_ANNOUNCEMENT_SOURCE}")
+
 
 
 def fetch_vietnam_index_via_hose(session: requests.Session) -> tuple[float, float, float]:
@@ -4859,6 +5204,8 @@ def get_market_data() -> None:
         print(f"[WARN] Taiwan export trend fetch failed: {exc}", file=sys.stderr)
     else:
         print_taiwan_export_trend_snapshot(export_trend_snapshot)
+
+    print_recent_corporate_announcements_section(run_started)
 
     print("-" * 40)
 

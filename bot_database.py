@@ -9,7 +9,7 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent
 DATA_DIR = PROJECT_ROOT / "data"
 DATABASE_PATH = DATA_DIR / "taiwanstockbot.sqlite3"
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 DEFAULT_CATEGORIES = [
     ("指數", 10, "市場總覽"),
@@ -173,6 +173,25 @@ def ensure_database(db_path: Path = DATABASE_PATH) -> None:
                 fetched_at_local TEXT NOT NULL,
                 fetched_at_utc TEXT NOT NULL,
                 data_source TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS corporate_announcements (
+                event_key TEXT PRIMARY KEY,
+                symbol TEXT NOT NULL,
+                company_id TEXT NOT NULL,
+                company_name TEXT NOT NULL,
+                market_name TEXT,
+                event_date TEXT NOT NULL,
+                event_date_roc TEXT NOT NULL,
+                event_time TEXT,
+                title TEXT NOT NULL,
+                source TEXT NOT NULL,
+                detail_api_name TEXT,
+                detail_params_json TEXT,
+                fetched_at TEXT NOT NULL
             )
             """
         )
@@ -489,6 +508,41 @@ def log_source_fetch(
             ),
         )
 
+
+def load_latest_source_fetch_log(
+    source: str,
+    scope: str,
+    *,
+    asof_key: str | None = None,
+    db_path: Path = DATABASE_PATH,
+) -> dict[str, Any] | None:
+    ensure_database(db_path)
+    with connect(db_path) as connection:
+        connection.row_factory = sqlite3.Row
+        if asof_key is None:
+            row = connection.execute(
+                """
+                SELECT source, scope, asof_key, status, fetched_at, error_message
+                FROM source_fetch_log
+                WHERE source = ? AND scope = ?
+                ORDER BY fetched_at DESC
+                LIMIT 1
+                """,
+                (source, scope),
+            ).fetchone()
+        else:
+            row = connection.execute(
+                """
+                SELECT source, scope, asof_key, status, fetched_at, error_message
+                FROM source_fetch_log
+                WHERE source = ? AND scope = ? AND asof_key = ?
+                ORDER BY fetched_at DESC
+                LIMIT 1
+                """,
+                (source, scope, asof_key),
+            ).fetchone()
+        return dict(row) if row else None
+
 def upsert_institutional_futures_snapshot(snapshot: dict[str, Any], db_path: Path = DATABASE_PATH) -> None:
     asof_date = str(snapshot.get("asof_date") or "").strip()
     if not asof_date:
@@ -561,3 +615,114 @@ def load_latest_institutional_futures_snapshot(db_path: Path = DATABASE_PATH) ->
             """
         ).fetchone()
         return dict(row) if row else None
+
+
+def upsert_corporate_announcement(
+    *,
+    event_key: str,
+    symbol: str,
+    company_id: str,
+    company_name: str,
+    event_date: str,
+    event_date_roc: str,
+    title: str,
+    source: str,
+    market_name: str | None = None,
+    event_time: str | None = None,
+    detail_api_name: str | None = None,
+    detail_params_json: str | None = None,
+    fetched_at: str | None = None,
+    db_path: Path = DATABASE_PATH,
+) -> None:
+    if not event_key:
+        return
+
+    ensure_database(db_path)
+    fetched_at_text = fetched_at or datetime.now().isoformat(timespec="seconds")
+
+    with connect(db_path) as connection:
+        connection.execute(
+            """
+            INSERT INTO corporate_announcements (
+                event_key, symbol, company_id, company_name, market_name,
+                event_date, event_date_roc, event_time, title,
+                source, detail_api_name, detail_params_json, fetched_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(event_key) DO UPDATE SET
+                symbol = excluded.symbol,
+                company_id = excluded.company_id,
+                company_name = excluded.company_name,
+                market_name = excluded.market_name,
+                event_date = excluded.event_date,
+                event_date_roc = excluded.event_date_roc,
+                event_time = excluded.event_time,
+                title = excluded.title,
+                source = excluded.source,
+                detail_api_name = excluded.detail_api_name,
+                detail_params_json = excluded.detail_params_json,
+                fetched_at = excluded.fetched_at
+            """,
+            (
+                event_key,
+                symbol,
+                company_id,
+                company_name,
+                market_name,
+                event_date,
+                event_date_roc,
+                event_time,
+                title,
+                source,
+                detail_api_name,
+                detail_params_json,
+                fetched_at_text,
+            ),
+        )
+
+
+
+def load_corporate_announcements(
+    *,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    symbol: str | None = None,
+    db_path: Path = DATABASE_PATH,
+) -> list[dict[str, Any]]:
+    ensure_database(db_path)
+    query = [
+        """
+        SELECT
+            event_key, symbol, company_id, company_name, market_name,
+            event_date, event_date_roc, event_time, title,
+            source, detail_api_name, detail_params_json, fetched_at
+        FROM corporate_announcements
+        WHERE 1 = 1
+        """
+    ]
+    params: list[Any] = []
+
+    if start_date:
+        query.append('AND event_date >= ?')
+        params.append(start_date)
+    if end_date:
+        query.append('AND event_date <= ?')
+        params.append(end_date)
+    if symbol:
+        query.append('AND symbol = ?')
+        params.append(symbol)
+
+    query.append(
+        """
+        ORDER BY
+            event_date DESC,
+            COALESCE(event_time, '') DESC,
+            company_id ASC,
+            event_key ASC
+        """
+    )
+
+    with connect(db_path) as connection:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute("\n".join(query), params).fetchall()
+        return [dict(row) for row in rows]
+
