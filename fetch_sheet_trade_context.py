@@ -1221,6 +1221,34 @@ def fallback_context(message: str) -> dict[str, Any]:
     }
 
 
+def build_yahoo_history_only_context(
+    market_rows,
+    revenue_cache: dict[str, dict[str, Any]],
+    warning: str,
+) -> dict[str, Any]:
+    history_targets = {
+        "SOXX" if row.ticker == "^SOX" else row.ticker
+        for row in market_rows.rows
+    }
+    history_ma_cache: dict[str, dict[str, float | None]] = {}
+    if history_targets:
+        with ThreadPoolExecutor(max_workers=min(8, len(history_targets))) as executor:
+            futures = {
+                executor.submit(fetch_history_ma_values, symbol): symbol
+                for symbol in history_targets
+            }
+            for future in as_completed(futures):
+                symbol = futures[future]
+                try:
+                    history_ma_cache[symbol] = future.result()
+                except Exception:
+                    history_ma_cache[symbol] = {}
+    context = build_context(market_rows, "Yahoo history fallback", {}, history_ma_cache, revenue_cache)
+    context["warning"] = warning
+    context["fallback_source"] = "Yahoo Finance historical moving averages"
+    return context
+
+
 
 
 
@@ -1285,7 +1313,11 @@ def main() -> int:
 
         if credentials_path is None or not credentials_path.exists():
 
-            context = fallback_context("missing Google service account credentials")
+            context = build_yahoo_history_only_context(
+                market_rows,
+                revenue_cache,
+                "missing Google service account credentials; used Yahoo history fallback",
+            )
 
         else:
 
@@ -1401,7 +1433,11 @@ def main() -> int:
 
                 except Exception as exc:
 
-                    context = fallback_context(f"failed to read Google Sheet MAs: {exc}")
+                    context = build_yahoo_history_only_context(
+                        market_rows,
+                        revenue_cache,
+                        f"failed to read Google Sheet MAs; used Yahoo history fallback: {exc}",
+                    )
 
 
 

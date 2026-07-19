@@ -13,6 +13,8 @@ Use this section as the durable record of what has already been finished. Check 
 - 2026-07-19: Added `fetch_us_macro_context.py` and `us_macro_context.json` to every Analyzer run. The report now reviews the Cleveland Fed headline/core CPI nowcast, New York Fed EFFR and target range, and U.S. Treasury 2Y/10Y/30Y yields with daily basis-point changes and the 10Y-minus-2Y curve spread. MacroMicro CPI and target-rate pages are retained as reference links, while stable automation uses official sources and falls back to `data\us_macro_context_cache.json`.
 - 2026-07-19: CPI reporting now must translate the Cleveland Fed nowcast into plain Chinese direction: MoM says whether prices are expected to rise/fall/stay flat versus the prior month, YoY describes the level versus a year earlier, and the article must distinguish disinflation from deflation.
 - 2026-07-19: Macro interpretation now records the daily change in the 10Y-minus-2Y spread and must end with a plain `偏好` / `偏壞` / `好壞參半` verdict for Taiwan technology stocks, financials, and TLT. A positive curve is not treated as automatically bullish.
+- 2026-07-19: Established report tables are now mandatory and additive to narrative: 市場總覽, ETF 操作表, 金融股操作表, and 個股操作表. A pre-publish validation gate stops the run if any table is missing. When Google Sheet credentials are unavailable, all tracked rows use Yahoo historical moving averages so tables are retained.
+- 2026-07-19: If `institutional_futures_snapshot` is empty, the pipeline now fetches the official TAIFEX contract-detail `Open Interest and Contract Value` FINI rows for contract code `TX` on the latest and previous trading days, persists the net position/change, and never substitutes either the trading-volume columns or the all-contract general table.
 - 2026-07-19: Outlook email failures now emit a warning and allow Google Workspace/Firebase publishing to continue, which keeps the workflow usable on either project machine even when Outlook COM is unavailable.
 - 2026-07-19: Monthly revenue capture is now independent of Google Sheet credentials and MA-context cache hits. Every run loads SQLite, live-fetches Yahoo revenue for missing or stale Taiwan stock rows, upserts successful results, and appends a top-level `monthly_revenue` section to `sheet_trade_context.json`.
 - 2026-07-19: Monthly-revenue targets now come directly from active `symbol_master` company/financial rows rather than `market_data.txt`, so a stock with a failed or missing same-day quote (for example `6274.TWO`) still receives revenue capture. `00917.TW` was corrected from `financial` to `etf` and is no longer treated as an operating company.
@@ -52,7 +54,8 @@ Use this section as the durable record of what has already been finished. Check 
 - Do not reintroduce manual page refresh for the report site; auto-refresh is already in place.
 - Do not force monthly revenue onto ETFs or indices; it only applies to individual stocks.
 - Do not assume Google Sheet moving averages are missing just because the API returned #N/A; the code already has a Yahoo fallback.
-- Do not read the `Trading Volume and Trading Value` table on TAIFEX `totalTableDate` as foreign futures open interest; the report now uses the SQLite-cached WantGoo net open-interest snapshot instead.
+- Do not read the `Trading Volume and Trading Value` columns or the all-contract `totalTableDate` table as Taiwan-index-futures open interest; use the `TX` rows from TAIFEX `futContractsDate` or a valid SQLite-cached net open-interest snapshot.
+- Do not omit ETF/financial/stock operation tables when Google credentials are missing; use Yahoo history for the complete moving-average context.
 
 
 ## Data Lifecycle Rules
@@ -60,6 +63,7 @@ Use this section as the durable record of what has already been finished. Check 
 Use these rules when changing cache, database, or report generation behavior.
 
 - On startup, if the database has no usable data for the current report date and source, fetch live data once and store it before generating the report.
+- If institutional futures data is absent, fetch official TAIFEX open-interest data once and persist it before analysis. Only report unavailable after that live attempt fails.
 - During active trading sessions, always fetch live market data for the markets that are currently trading; do not rely only on yesterday's database snapshot.
 - For closed markets, reuse the latest database snapshot for that market unless the current report date has no stored snapshot yet.
 - Report generation should combine fresh live snapshots with persisted database data, then derive conclusions from the merged state.

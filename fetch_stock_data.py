@@ -66,7 +66,7 @@ from zoneinfo import ZoneInfo
 
 from urllib.parse import quote, urljoin
 
-from bot_database import count_active_symbols, ensure_database, load_active_symbols, load_latest_institutional_futures_snapshot, seed_category_master, upsert_daily_ohlcv, upsert_symbol
+from bot_database import count_active_symbols, ensure_database, load_active_symbols, load_latest_institutional_futures_snapshot, seed_category_master, upsert_daily_ohlcv, upsert_institutional_futures_snapshot, upsert_symbol
 
 
 
@@ -1062,7 +1062,7 @@ YAHOO_HEADERS = {
 
 YAHOO_MARGIN_BALANCE_URL = "https://tw.stock.yahoo.com/margin-balance"
 
-TAIFEX_INSTITUTIONAL_TRADERS_URL = "https://www.taifex.com.tw/enl/eng3/totalTableDate"
+TAIFEX_INSTITUTIONAL_TRADERS_URL = "https://www.taifex.com.tw/enl/eng3/futContractsDate"
 
 TAIFEX_HEADERS = {
 
@@ -2539,6 +2539,7 @@ def _parse_taifex_integer(value: str) -> int:
 def _fetch_taifex_institutional_rows_for_date(session: requests.Session, query_date: str) -> tuple[str, dict[str, dict[str, int]]]:
     payload = {
         "queryDate": query_date,
+        "commodityId": "TXF",
         "queryType": "",
         "goDay": "",
         "doQuery": "",
@@ -2558,33 +2559,40 @@ def _fetch_taifex_institutional_rows_for_date(session: requests.Session, query_d
         raise RuntimeError("TAIFEX institutional trader date not found")
 
     target_table_html = None
-    fallback_table_html = None
     for table_html in re.findall(r"<table\b[^>]*>.*?</table>", html_text, flags=re.S | re.I):
-        table_text = unescape(re.sub(r"<[^>]+>", " ", table_html))
-        if all(token in table_text for token in ("Dealers", "Investment Trust", "FINI")) and fallback_table_html is None:
-            fallback_table_html = table_html
-        if "Open Interest and Contract Value" in table_text and all(token in table_text for token in ("Dealers", "Investment Trust", "FINI")):
+        table_text = re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", " ", table_html)))
+        if "Contract Code" in table_text and "Open Interest and Contract Value" in table_text and all(token in table_text for token in ("Dealers", "Investment Trust", "FINI")):
             target_table_html = table_html
             break
-
-    if target_table_html is None:
-        target_table_html = fallback_table_html
 
     if target_table_html is None:
         raise RuntimeError("TAIFEX open interest table not found")
 
     rows: dict[str, dict[str, int]] = {}
+    in_tx_contract = False
     for tr_html in re.findall(r"<tr\b[^>]*>.*?</tr>", target_table_html, flags=re.S | re.I):
         cell_htmls = re.findall(r"<t[dh]\b[^>]*>(.*?)</t[dh]>", tr_html, flags=re.S | re.I)
         cells = [re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", " ", cell))).strip() for cell in cell_htmls]
-        if len(cells) == 7 and cells[0] in {"Dealers", "Investment Trust", "FINI", "Total"}:
-            rows[cells[0]] = {
-                "long_volume": _parse_taifex_integer(cells[1]),
-                "long_value": _parse_taifex_integer(cells[2]),
-                "short_volume": _parse_taifex_integer(cells[3]),
-                "short_value": _parse_taifex_integer(cells[4]),
-                "net_volume": _parse_taifex_integer(cells[5]),
-                "net_value": _parse_taifex_integer(cells[6]),
+        participant = ""
+        values: list[str] = []
+        if len(cells) == 15 and cells[1] == "TX" and cells[2] == "Dealers":
+            in_tx_contract = True
+            participant = cells[2]
+            values = cells[3:]
+        elif in_tx_contract and len(cells) == 13 and cells[0] in {"Investment Trust", "FINI"}:
+            participant = cells[0]
+            values = cells[1:]
+        elif in_tx_contract:
+            break
+
+        if participant and len(values) == 12:
+            rows[participant] = {
+                "long_volume": _parse_taifex_integer(values[6]),
+                "long_value": _parse_taifex_integer(values[7]),
+                "short_volume": _parse_taifex_integer(values[8]),
+                "short_value": _parse_taifex_integer(values[9]),
+                "net_volume": _parse_taifex_integer(values[10]),
+                "net_value": _parse_taifex_integer(values[11]),
             }
 
     if "FINI" not in rows:
@@ -2643,9 +2651,37 @@ def _fetch_taifex_institutional_rows(session: requests.Session, reference_now: d
 
 def fetch_taifex_institutional_traders(reference_now: Optional[datetime] = None, session: Optional[requests.Session] = None) -> TaifexInstitutionalTraderSnapshot:
     row = load_latest_institutional_futures_snapshot()
-    if row is None:
-        raise RuntimeError('institutional futures cache is empty; seed institutional_futures_snapshot first')
-    return TaifexInstitutionalTraderSnapshot(**row)
+    invalid_general_table_fallback = row is not None and str(row.get("data_source", "")).startswith("live-taifex-open-interest")
+    if row is not None and not invalid_general_table_fallback:
+        return TaifexInstitutionalTraderSnapshot(**row)
+    if session is None:
+        with requests.Session() as auto_session:
+            return fetch_taifex_institutional_traders(reference_now, auto_session)
+
+    local_now = reference_now or datetime.now(TAIPEI_TZ)
+    current_date, current_rows, previous_date, previous_rows = _fetch_taifex_institutional_rows(session, local_now)
+
+    def net(rows: dict[str, dict[str, int]], participant: str) -> int:
+        return int(rows.get(participant, {}).get("net_volume", 0))
+
+    snapshot = TaifexInstitutionalTraderSnapshot(
+        asof_date=current_date,
+        foreign_net=net(current_rows, "FINI"),
+        foreign_change=net(current_rows, "FINI") - net(previous_rows, "FINI"),
+        small_foreign_net=0,
+        small_foreign_change=0,
+        investment_trust_net=net(current_rows, "Investment Trust"),
+        investment_trust_change=net(current_rows, "Investment Trust") - net(previous_rows, "Investment Trust"),
+        dealer_net=net(current_rows, "Dealers"),
+        dealer_change=net(current_rows, "Dealers") - net(previous_rows, "Dealers"),
+        total_net=sum(net(current_rows, participant) for participant in ("Dealers", "Investment Trust", "FINI")),
+        total_change=sum(net(current_rows, participant) - net(previous_rows, participant) for participant in ("Dealers", "Investment Trust", "FINI")),
+        fetched_at_local=local_now.astimezone(TAIPEI_TZ).strftime("%Y-%m-%d %H:%M:%S"),
+        fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+        data_source=f"live-taifex-tx-open-interest (previous {previous_date})",
+    )
+    upsert_institutional_futures_snapshot(asdict(snapshot))
+    return snapshot
 
 def fetch_yahoo_margin_balance(session: Optional[requests.Session] = None) -> MarginBalanceSnapshot:
     if session is None:
@@ -3459,10 +3495,12 @@ def print_taifex_institutional_trader_snapshot(snapshot: TaifexInstitutionalTrad
     def signed(value: int) -> str:
         return f"+{value:,}" if value >= 0 else f"{value:,}"
 
-    print("台指期貨法人未平倉淨部位（快取）")
+    state_label = "官方即時補抓" if snapshot.data_source.startswith("live-taifex") else "快取"
+    print(f"台指期貨法人未平倉淨部位（{state_label}）")
     print(f"  資料日期: {snapshot.asof_date}")
     print(f"  外資: {snapshot.foreign_net:,} ({signed(snapshot.foreign_change)})")
-    print(f"  小外資: {snapshot.small_foreign_net:,} ({signed(snapshot.small_foreign_change)})")
+    if not snapshot.data_source.startswith("live-taifex"):
+        print(f"  小外資: {snapshot.small_foreign_net:,} ({signed(snapshot.small_foreign_change)})")
     print(f"  投信: {snapshot.investment_trust_net:,} ({signed(snapshot.investment_trust_change)})")
     print(f"  自營商: {snapshot.dealer_net:,} ({signed(snapshot.dealer_change)})")
     print(f"  合計: {snapshot.total_net:,} ({signed(snapshot.total_change)})")

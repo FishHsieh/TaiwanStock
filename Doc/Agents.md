@@ -142,6 +142,8 @@
 
   Use the independent `monthly_revenue` section even when Google Sheet moving averages are unavailable. Missing or stale individual-stock rows must trigger a live fetch and SQLite upsert before analysis. Only identify revenue as unavailable for specific stocks that remain absent after the live attempt; do not claim a database-wide absence without acknowledging the attempted fetch.
 
+  Descriptive paragraphs are additive and must never replace established tables. Always retain separate Markdown tables for 市場總覽, ETF 操作表, 金融股操作表, and 個股操作表, including every applicable row with valid moving-average context. If Google Sheet access is unavailable, use the Yahoo-history fallback rows rather than dropping the operation tables. If the institutional-futures cache is empty, the pipeline must fetch contract code `TX` from the official TAIFEX `futContractsDate` open-interest columns for the latest and previous trading days; never substitute the all-contract general table or trading-volume columns. The report must use the resulting FINI net position/day change when that fallback succeeds.
+
   Always review the appended U.S. macro context. Include a concise paragraph covering the Cleveland Fed headline/core CPI nowcast (explicitly label it as a nowcast rather than official BLS CPI), the effective federal funds rate and target range, and the latest 2Y/10Y/30Y Treasury yields, daily basis-point moves, and 10Y-minus-2Y curve spread when available. Explain how sticky/rising core CPI and higher 2Y/10Y yields tighten financial conditions, pressure long-duration growth/technology valuations, and weigh on Treasury prices/TLT; falling yields imply the reverse. Never invent missing macro values, and identify cached observations as cached.
 
   Immediately follow the CPI numbers with a plain-Chinese direction statement. Use MoM to state whether Cleveland Fed expects headline and core prices to rise, fall, or remain roughly flat versus the previous month; use YoY only to describe the level versus one year earlier. Explicitly distinguish disinflation from deflation, because lower YoY inflation does not mean prices are falling when MoM is positive. If headline MoM is near zero but core MoM is positive, explain that surface inflation is cooling while underlying price pressure is still rising modestly.
@@ -3588,8 +3590,6 @@ Use one consistent display name for each of `越南大盤 (VNINDEX)`, `日圓匯
 
 
 - [FIREBASE_MAPPING.md](FIREBASE_MAPPING.md)
-
-
 
 
 

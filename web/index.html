@@ -189,7 +189,7 @@
 
 
 
-  <meta name="report-version" content="20260719_1145">
+  <meta name="report-version" content="20260719_1216">
 
 
 
@@ -221,7 +221,7 @@
 
 
 
-  <title>TaiwanStockBot 市場快訊 2026/07/19 11:45</title>
+  <title>TaiwanStockBot 市場快訊 2026/07/19 12:16</title>
 
 
 
@@ -9801,7 +9801,7 @@
 
 
 
-        <span class="pill">2026/07/19 11:45</span>
+        <span class="pill">2026/07/19 12:16</span>
 
 
 
@@ -10025,7 +10025,7 @@
 
 
 
-        <div>更新時間：2026/07/19 11:45</div>
+        <div>更新時間：2026/07/19 12:16</div>
 
 
 
@@ -10121,126 +10121,954 @@
 
 
 
-    <h2>市場快訊：台股/櫃買、韓股、日股、越南、美股收盤；外匯、商品、加密全天報價</h2>
-    <p>台北時間 2026-07-19 11:42，台股/櫃買、韓股、日股、越南股市與美股皆為收盤資料；美元指數、日圓匯率、黃金、石油、比特幣為全天報價。Google Sheet 均線列本次為空，原因是 `missing Google service account credentials`；本地 `daily_ohlcv` 也僅有單日資料，無法形成 5/10/月/季/半年/年均線，因此以下操作建議不硬造均線，改以跌幅、量能、月營收與跨市場風險訊號判讀。月營收資料完整：目標 62 檔、可用 62 檔，未觸發 live refresh，無錯誤。</p>
-    <h2>市場總覽</h2>
+    <h2>市場快訊：台股/櫃買收盤、韓日越美收盤；外匯商品加密全天報價</h2>
+    <p>台北時間 2026-07-19 12:11，台股、櫃買、韓股、日股、越南與美股均已收盤；美元指數、日圓匯率、黃金、石油與比特幣為全天報價。非交易中市場採用 SQLite 快取/已擷取快照，不視為即時盤中跳動。</p>
+    <p>台股 7 月 17 日重挫，集中市場收 42,671.27 點、跌 6.47%，成交量較前一日放大 75.9%、較 5 日均量放大 57.3%，屬於帶量殺低。櫃買指數跌 7.02%，中小型股壓力更重。融資餘額減少 276.13 億元，代表槓桿多單被迫降溫；融券餘額增加 59,678 張、券資比升至 2.53%，空方情緒升溫。台指期外資未平倉淨部位為 -86,189 口，較前一日再減少 1,736 口，外資仍偏空；三大法人合計淨部位 -6,308 口，但較前一日增加 1,224 口，顯示總體空方壓力略有收斂，主要是自營商淨部位增加 4,009 口抵銷部分外資與投信偏空。</p>
+    <p>台灣出口近三個月仍強，2026 年 3 月 802.00 億美元、年增 61.85%；4 月降至 676.00 億美元、年增 39.00%；5 月回升到 785.00 億美元、年增 51.68%。月度趨勢是 4 月回落、5 月反彈，外需與 AI/電子鏈仍有支撐，但股價短線已先反映高成長預期，遇到全球科技股與半導體評價修正時，容易出現高本益比壓縮。</p>
+    <p>美國宏觀方面，Cleveland Fed 7 月 CPI nowcast 是即時預估，不是官方 BLS CPI。其預估 2026 年 7 月 headline CPI 月增率 -0.01%、年增率 3.32%，core CPI 月增率 +0.21%、年增率 2.52%。用白話說，整體物價相較前月大致持平、略微下降，但核心物價仍小幅上升；年增率代表物價水準仍高於一年前，不等於全面通縮。這是通膨降溫與核心黏著並存，不是通膨壓力消失。EFFR 為 3.63%，聯準會目標區間 3.50% 至 3.75%。美債 2 年期殖利率 4.18%、日升 2bp；10 年期 4.55%、日降 2bp；30 年期 5.06%、日降 3bp。10Y-2Y 利差為 +37bp，曲線維持正斜率但當日收窄約 4bp，因 2Y 上升而 10Y 下降。核心 CPI 黏著與 2Y 上行壓抑快速降息想像，對長天期成長股與高評價科技股偏不利；10Y 下行則短線支撐債券價格與 TLT，但 TLT 仍低於月、季、半年與年線。結論：台灣科技股 `偏壞`，金融股 `好壞參半`，TLT `好壞參半`。</p>
+    <p>金價上漲 0.83%，但仍低於主要中長期均線，反映避險需求回升但趨勢尚未修復；油價上漲 3.58%，站上短中期均線但仍低於季線，偏向供需或風險溢價推動的反彈，若延續，將增加通膨與企業成本壓力。日圓匯率採 `日圓匯率` 反向解讀，數值越高代表日圓越弱；本次日圓匯率小跌 0.01%，對區域資金壓力略降，但因缺少可比較均線，未列入市場總覽表。</p>
+    <h3>市場總覽</h3>
 <div class="table-wrap">
   <table class="report-table">
     <thead>
       <tr>
         <th style="text-align:left">市場</th>
         <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
         <th style="text-align:left">成交量分析</th>
-        <th style="text-align:left">均線註記</th>
+        <th style="text-align:left">判讀</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td style="text-align:left">台股加權</td>
+        <td style="text-align:left">台股</td>
         <td style="text-align:right">42,671.27 / -6.47%</td>
-        <td class="volume-positive" style="text-align:left">較前日 +75.9%，較5日 +57.3%，放量急殺</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，但仍在半年線、年線之上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +75.9%，較5日 +57.3%</td>
+        <td style="text-align:left">減碼</td>
       </tr>
       <tr>
         <td style="text-align:left">櫃買指數</td>
         <td style="text-align:right">378.44 / -7.02%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，但仍在半年線、年線之上</td>
         <td style="text-align:left">N/A</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">減碼</td>
       </tr>
       <tr>
-        <td style="text-align:left">韓股 KOSPI</td>
+        <td style="text-align:left">韓股</td>
         <td style="text-align:right">6,820.60 / -6.37%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，但仍在半年線、年線之上</td>
         <td style="text-align:left">較前日 +6.6%，較5日 -11.6%</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">減碼</td>
       </tr>
       <tr>
-        <td style="text-align:left">日股 NIKKEI</td>
+        <td style="text-align:left">日股</td>
         <td style="text-align:right">64,141.12 / -4.03%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，但仍在半年線、年線之上</td>
         <td class="volume-positive" style="text-align:left">較前日 +30.4%，較5日 +28.4%</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">減碼</td>
       </tr>
       <tr>
         <td style="text-align:left">費城半導體指數</td>
         <td style="text-align:right">11,673.89 / -1.63%</td>
+        <td style="text-align:left">以 SOXX 為均線代理：價格註記高於月線</td>
         <td style="text-align:left">N/A</td>
-        <td style="text-align:left">SOXX 均線代理不可用</td>
+        <td style="text-align:left">觀察，均線註記需留意代理口徑</td>
       </tr>
       <tr>
         <td style="text-align:left">NASDAQ 綜合指數</td>
         <td style="text-align:right">25,520.24 / -1.40%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，但仍在半年線、年線之上</td>
         <td style="text-align:left">較前日 -5.7%，較5日 +4.6%</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">減碼</td>
       </tr>
       <tr>
         <td style="text-align:left">S&amp;P 500</td>
         <td style="text-align:right">7,457.69 / -1.01%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
         <td style="text-align:left">較前日 -1.2%，較5日 +9.7%</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">持有</td>
       </tr>
       <tr>
         <td style="text-align:left">美國長債 ETF (TLT)</td>
         <td style="text-align:right">84.52 / +0.37%</td>
+        <td style="text-align:left">站上 5 日、10 日，但低於月線、季線、半年線、年線</td>
         <td class="volume-positive" style="text-align:left">較前日 +6.0%，較5日 +15.3%</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">弱勢反彈</td>
       </tr>
       <tr>
         <td style="text-align:left">越南大盤 (VNINDEX)</td>
         <td style="text-align:right">1,787.45 / -0.93%</td>
+        <td style="text-align:left">無可比較均線</td>
         <td style="text-align:left">N/A</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">僅列快照觀察</td>
       </tr>
       <tr>
         <td style="text-align:left">美元指數</td>
         <td style="text-align:right">100.75 / +0.02%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
         <td style="text-align:left">N/A</td>
-        <td style="text-align:left">均線不可比</td>
-      </tr>
-      <tr>
-        <td style="text-align:left">日圓匯率</td>
-        <td style="text-align:right">162.35 / -0.01%</td>
-        <td style="text-align:left">N/A；日圓匯率 越高代表日圓越弱，本日小降代表日圓略強</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">中性</td>
       </tr>
       <tr>
         <td style="text-align:left">黃金期貨</td>
         <td style="text-align:right">4,018.80 / +0.83%</td>
-        <td class="volume-positive" style="text-align:left">較前日 +2633.5%，較5日 +3039.5%，避險與實質利率敏感交易升溫</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">低於 5 日、10 日、月線、季線、半年線、年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +2633.5%，較5日 +3039.5%</td>
+        <td style="text-align:left">弱勢避險反彈</td>
       </tr>
       <tr>
         <td style="text-align:left">石油期貨</td>
         <td style="text-align:right">81.78 / +3.58%</td>
-        <td style="text-align:left">較前日 +24.5%，較5日 -15.2%，供需或地緣風險溢價升高</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:left">站上 5 日、10 日、月線，但低於季線</td>
+        <td style="text-align:left">較前日 +24.5%，較5日 -15.2%</td>
+        <td style="text-align:left">反彈但不追高</td>
       </tr>
       <tr>
         <td style="text-align:left">比特幣</td>
-        <td style="text-align:right">64,641.31 / +1.16%</td>
-        <td style="text-align:left">較前日 -46.1%，較5日 -50.7%，反彈但量縮</td>
-        <td style="text-align:left">均線不可比</td>
+        <td style="text-align:right">64,588.00 / +1.08%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線，但低於季線、半年線、年線</td>
+        <td style="text-align:left">較前日 -47.2%，較5日 -51.7%</td>
+        <td style="text-align:left">反彈量縮，保守</td>
       </tr>
     </tbody>
   </table>
 </div>
 
-    <h2>盤勢主軸</h2>
-    <p>台股加權重挫 6.47%、櫃買跌 7.02%，且加權指數成交量同時高於前日與 5 日均量，屬於放量風險重估，不是單純量縮整理。韓股同步大跌，SK Hynix 跌 11.53%、Samsung Electronics 跌 8.77%，顯示壓力集中在亞洲半導體與 AI 硬體鏈；日股跌 4.03%，美股雖跌幅較小，但 NASDAQ 與費半也收黑，對台灣高本益比科技股形成外部估值壓力。</p>
-    <p>Yahoo 融資融券顯示 2026/07/17 融資餘額降至 5,879.63 億元、單日減少 276.13 億，代表槓桿資金被迫收縮；融券餘額增加 59,678 張至 236,300 張，券資比 2.53%，偏向空方避險與追空情緒升溫。當沖總量增加 403,682 張至 3,219,810 張，也說明盤中波動與短線資金換手放大。TAIFEX institutional futures summary 本次未附 FINI 淨部位與日變化，不能推論外資期貨方向。</p>
-    <p>台灣出口近三個月仍強：2026 年 3 月出口 802 億美元、年增 61.85%；4 月降至 676 億美元、年增 39.00%；5 月反彈至 785 億美元、年增 51.68%。趨勢是 4 月回落、5 月回升，外需與 AI/電子鏈仍有支撐，但今日價格反應顯示市場更在意估值、槓桿與全球科技股回檔，而不是出口數據本身。</p>
-    <p>美國宏觀方面，Cleveland Fed 7 月 CPI 為即時 nowcast，不是 BLS 官方 CPI：headline CPI 預估 MoM -0.01%、YoY +3.32%；core CPI 預估 MoM +0.21%、YoY +2.52%。白話說，整體價格相較前月大致持平、甚至略低，但核心價格仍小幅上升；YoY 代表物價仍比一年前高，不是全面降價。這是通膨降溫但非通縮，且核心通膨沒有消失。有效聯邦基金利率為 3.63%，目標區間 3.50% 到 3.75%；2026/07/17 美國 2 年債 4.18%、日升 2bp，10 年債 4.55%、日降 2bp，30 年債 5.06%、日降 3bp，10Y-2Y 利差 +37bp、單日收窄約 4bp。曲線為正比倒掛健康，但 2 年利率上升反映降息預期受限，核心通膨偏黏也不利快速降息；10 年利率下降支撐 TLT 當日反彈，但高利率水位仍壓抑長天期成長股估值。結論：台灣科技股 `偏壞`，金融股 `好壞參半`，TLT `好壞參半`。</p>
-    <h2>ETF 操作</h2>
-    <p>高 beta 與科技型 ETF 如 00403A主動統一升級50、0050元大台灣50、0052富邦科技、00631L元大台灣50正2、00735國泰臺韓科技、00830國泰費城半導體、00891中信關鍵半導體、00947台新臺灣IC設計、00981A主動統一台股增長、00982A主動群益台灣強棒、00988A主動統一全球創新、00990A主動元大AI新經濟、00991A主動復華未來50、009816凱基台灣TOP50，多數出現 6% 到 13% 跌幅且量能放大，建議先減碼或暫不加碼，等跌勢量縮或重新站回可比均線後再評估。00631L元大台灣50正2跌 13.50%，槓桿 ETF 不宜攤平。</p>
-    <p>高股息與低波 ETF 如 0056元大高股息、00713元大台灣高息低波、00878國泰永續高股息、00900富邦特選高股息30、00915凱基優選高股息30、00918大華優利高填息30、00919群益台灣精選高息、00917中信特選金融，跌幅相對較小但多數放量，建議持有者降槓桿、分批觀察，不追高。00635U期元大S&amp;P黃金雖受黃金上漲題材支撐，但台灣 ETF 本身收跌且放量，偏避險持有；00642U元大石油小漲 0.15%，油價上漲提供支撐但量能低於 5 日均量，續抱不追。</p>
-    <h2 class="section-heading section-heading-financial">金融股操作</h2>
-    <p>金融股相對抗跌，2801彰銀 -0.21%、2812台中銀 +1.48%、2834臺企銀 -0.55%、2880華南金 +1.90%、2884玉山金 +0.57%、2886兆豐金 +2.15%、2890永豐金 +0.38%、2892第一金 +0.44% 表現明顯優於大盤；但多檔同步放量，代表資金避險輪動而非無風險買點。建議既有持股續抱，新增資金以 2880華南金、2884玉山金、2886兆豐金、2892第一金這類相對強勢股分批觀察。2855統一證跌 4.75%、2882國泰金跌 3.08%、2885元大金跌 2.55%、2883凱基金跌 1.80%、2881富邦金跌 0.40%，證券與壽險色彩較高者受股市波動拖累，建議降低追價。</p>
-    <p>金融股 2026/06 營收分化：2801彰銀 MoM +8.71%、YoY +9.51%、YTD YoY +14.62%；2812台中銀 MoM -1.32%、YoY +16.56%、YTD +22.61%；2880華南金 MoM +3.09%、YoY +29.20%、YTD +25.84%；2886兆豐金 MoM -3.31%、YoY +1.53%、YTD +17.14%。壽險金控 2881富邦金與 2882國泰金單月 YoY 仍為負，但年初至今仍正成長，需觀察資本市場波動對獲利的後續影響。</p>
-    <h2>個股操作</h2>
-    <p>AIPC手機概念股普遍殺估值：2059川湖 -8.84% 放量，2026/06 營收 MoM +17.18%、YoY +220.52%、YTD +98.95%，基本面強但籌碼壓力重，建議持有不追、急跌後等量縮；2357華碩 MoM +54.46%、YoY +55.63%、YTD +38.85%，跌幅僅 2.10%，相對抗跌；2376技嘉、2377微星、2382廣達、3008大立光、5203訊連則以減碼或觀望為主，尤其廣達放量跌 7.53%，短線需守風控。</p>
-    <p>半導體主鏈同步受壓。矽晶圓與晶片代工中，台積電 (2330.TW) 跌 7.29% 且量能較 5 日均量 +201.2%，2026/06 營收 MoM +6.16%、YoY +67.87%、YTD +35.61%，基本面仍強但今日是估值與槓桿出清；聯電 (2303.TW) 跌停、力積電 (6770.TW) 近跌停，建議先避開融資壓力與破線風險。先進封裝 CoWoS 概念的 2449京元電子、日月光投控 (3711.TW)、6223旺矽、6239力成皆重挫且多數放量，月營收 YoY 仍正成長，但短線操作以減碼、等待止跌為主。</p>
-    <p>IC設計&amp;IP概念中，聯發科 (2454.TW) 跌 8.92%，2026/06 營收 MoM +22.30%、YoY +2.80%、YTD -0.77%，成長動能不如高估值反映；3035智原、3443創意、5274信驊跌幅也大，其中創意與信驊月營收 YoY 分別 +103.72%、+67.47%，屬基本面強但股價風險升高，建議保留核心、降低槓桿。3034聯詠跌 2.33%，相對抗跌但 YTD YoY -2.75%，先持有觀察。</p>
-    <p>PCB載板&amp;SiC 是重災區：華通 (2313.TW)、台光電 (2383.TW)、3037欣興、3189景碩、6274台燿、8046南電多數跌近停板。6274台燿歸類為 PCB載板&amp;SiC，2026/06 營收 MoM +2.10%、YoY +107.72%、YTD +84.03%，不能放進傳產、生技或軍工；但價格跌 9.65%，建議只適合長線分批，不適合短線搶反彈。台光電 YoY +120.69%、欣興 YoY +36.31%、南電 YoY +50.03%，基本面不弱，問題在於短線籌碼與估值同步下修。</p>
-    <p>其他族群方面，3017奇鋐與3653健策屬液冷散熱，營收 YoY 分別 +66.11%、+57.64%，但今日放量下跌，續抱不追；2301光寶科屬電腦週邊&amp;電源供應，營收 MoM +7.50%、YoY +36.98%、YTD +25.08%，但跌 9.86% 放量，先減碼控風險。7610聯友金屬歸類再生循環&amp;稀有金屬，2026/06 營收 MoM +22.28%、YoY +555.43%，YTD N/A，跌 7.31% 但量能放大，偏高波動持有。2312金寶電子歸類電子代工/EMS，2026/06 營收 MoM +20.22%、YoY +32.70%、YTD -5.29%，不可放入軍工；短線因跌 6.85% 且放量，建議觀望。6446藥華藥雖屬生技醫療、營收 YoY +94.88%，但今日跌 5.16%，防守型題材也未完全脫鉤大盤風險。</p>
-    <p>整體結論：今日不是單一個股利空，而是亞洲科技股、半導體估值、融資槓桿與美國利率預期共同造成的系統性回檔。操作上先降槓桿、避開放量跌停與正2類商品；基本面仍強的 AI、PCB、先進封裝與散熱股，可等量縮止跌或重新取得均線訊號後再分批評估。</p>
+    <h3>ETF 操作表</h3>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">00403A主動統一升級50</td>
+        <td style="text-align:right">9.52 / -7.39%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +620.3%，較5日 +400.9%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">0050元大台灣50</td>
+        <td style="text-align:right">100.15 / -5.87%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +551.8%，較5日 +376.6%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">0052富邦科技</td>
+        <td style="text-align:right">57.90 / -6.91%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線；年線口徑偏離，仍視為弱勢</td>
+        <td class="volume-positive" style="text-align:left">較前日 +259.0%，較5日 +223.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">0056元大高股息</td>
+        <td style="text-align:right">50.75 / -3.61%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +322.4%，較5日 +262.8%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00631L元大台灣50正2</td>
+        <td style="text-align:right">32.17 / -13.50%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +362.3%，較5日 +323.5%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00635U期元大S&amp;P黃金</td>
+        <td style="text-align:right">41.39 / -1.38%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +216.9%，較5日 +160.0%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00642U元大石油</td>
+        <td style="text-align:right">25.90 / +0.15%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線，但低於季線</td>
+        <td style="text-align:left">較前日 -10.8%，較5日 -46.4%</td>
+        <td style="text-align:left">減碼，不追高</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00646元大S&amp;P500</td>
+        <td style="text-align:right">76.05 / -1.04%</td>
+        <td style="text-align:left">站上 10 日、月線、季線、半年線與年線，略低於 5 日線</td>
+        <td style="text-align:left">較前日 -62.9%，較5日 -33.3%</td>
+        <td style="text-align:left">拉回可加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00713元大台灣高息低波</td>
+        <td style="text-align:right">60.25 / -1.07%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -9.4%，較5日 +72.9%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00735國泰臺韓科技</td>
+        <td style="text-align:right">93.05 / -8.14%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +87.0%，較5日 +73.8%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00738U期元大道瓊白銀</td>
+        <td style="text-align:right">44.24 / -3.66%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +144.1%，較5日 +213.8%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00757統一FANG+</td>
+        <td style="text-align:right">130.35 / -3.69%</td>
+        <td style="text-align:left">拉回但仍站上月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +61.0%，較5日 +117.3%</td>
+        <td style="text-align:left">小量承接</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00763U期街口道瓊銅</td>
+        <td style="text-align:right">33.08 / -2.99%</td>
+        <td style="text-align:left">貼近月線，短線低於 5 日與 10 日</td>
+        <td style="text-align:left">較前日 -14.0%，較5日 -0.4%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00830國泰費城半導體</td>
+        <td style="text-align:right">83.10 / -6.68%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +69.5%，較5日 +126.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00876元大全球5G</td>
+        <td style="text-align:right">87.25 / -6.98%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 -0.0%，較5日 +10.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00878國泰永續高股息</td>
+        <td style="text-align:right">31.81 / -3.46%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +185.5%，較5日 +165.5%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00891中信關鍵半導體</td>
+        <td style="text-align:right">33.35 / -7.39%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +282.6%，較5日 +224.3%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00895富邦未來車</td>
+        <td style="text-align:right">49.09 / -4.40%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +202.9%，較5日 +70.1%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00900富邦特選高股息30</td>
+        <td style="text-align:right">18.00 / -4.66%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +171.9%，較5日 +149.5%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00909國泰數位支付服務</td>
+        <td style="text-align:right">43.04 / -6.19%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +255.0%，較5日 +271.0%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00910第一金太空衛星</td>
+        <td style="text-align:right">53.40 / -6.32%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +250.7%，較5日 +149.1%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00911兆豐洲際半導體</td>
+        <td style="text-align:right">53.60 / -6.13%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +37.8%，較5日 +29.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00915凱基優選高股息30</td>
+        <td style="text-align:right">30.71 / -3.31%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +49.7%，較5日 +110.3%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00917中信特選金融</td>
+        <td style="text-align:right">23.83 / -0.71%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td style="text-align:left">較前日 -1.0%，較5日 +50.3%</td>
+        <td style="text-align:left">拉回可加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00918大華優利高填息30</td>
+        <td style="text-align:right">31.01 / -2.39%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +165.3%，較5日 +119.7%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00919群益台灣精選高息</td>
+        <td style="text-align:right">28.93 / -2.10%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +162.3%，較5日 +144.0%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00922國泰台灣領袖50</td>
+        <td style="text-align:right">37.91 / -6.16%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +511.9%，較5日 +249.6%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00924復華S&amp;P500</td>
+        <td style="text-align:right">32.49 / -2.29%</td>
+        <td style="text-align:left">拉回但仍站上月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +41.0%，較5日 +46.9%</td>
+        <td style="text-align:left">小量承接</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00947台新臺灣IC設計</td>
+        <td style="text-align:right">32.32 / -8.23%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +95.8%，較5日 +94.1%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">009805新光美國電力基建</td>
+        <td style="text-align:right">16.02 / -2.91%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +221.3%，較5日 +86.4%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">009816凱基台灣TOP50</td>
+        <td style="text-align:right">14.28 / -6.61%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +337.7%，較5日 +303.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00981A主動統一台股增長</td>
+        <td style="text-align:right">26.43 / -8.70%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +312.3%，較5日 +175.5%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00982A主動群益台灣強棒</td>
+        <td style="text-align:right">21.43 / -9.08%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +407.4%，較5日 +279.6%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00988A主動統一全球創新</td>
+        <td style="text-align:right">16.24 / -10.82%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +101.6%，較5日 +179.5%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00990A主動元大AI新經濟</td>
+        <td style="text-align:right">15.49 / -9.89%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，貼近半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +107.8%，較5日 +187.6%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">00991A主動復華未來50</td>
+        <td style="text-align:right">16.82 / -9.23%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +141.4%，較5日 +162.7%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <h3>金融股操作表</h3>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">營收</th>
+        <th style="text-align:left">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">2801彰銀</td>
+        <td style="text-align:right">23.90 / -0.21%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +72.9%，較5日 +95.7%</td>
+        <td style="text-align:left">2026/06 MoM +8.71%，YoY +9.51%，YTD YoY +14.62%</td>
+        <td style="text-align:left">加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2812台中銀</td>
+        <td style="text-align:right">20.55 / +1.48%</td>
+        <td style="text-align:left">站上短中期均線，但略低於年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +111.9%，較5日 +188.3%</td>
+        <td style="text-align:left">2026/06 MoM -1.32%，YoY +16.56%，YTD YoY +22.61%</td>
+        <td style="text-align:left">拉回加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2834臺企銀</td>
+        <td style="text-align:right">18.05 / -0.55%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td style="text-align:left">較前日 -21.2%，較5日 +16.4%</td>
+        <td style="text-align:left">2026/06 MoM +3.28%，YoY -7.72%，YTD YoY +4.14%</td>
+        <td style="text-align:left">拉回加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2855統一證</td>
+        <td style="text-align:right">44.15 / -4.75%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +126.9%，較5日 +52.3%</td>
+        <td style="text-align:left">2026/06 MoM -26.62%，YoY +199.02%，YTD YoY +334.18%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2880華南金</td>
+        <td style="text-align:right">40.15 / +1.90%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +34.9%，較5日 +126.6%</td>
+        <td style="text-align:left">2026/06 MoM +3.09%，YoY +29.20%，YTD YoY +25.84%</td>
+        <td style="text-align:left">加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2881富邦金</td>
+        <td style="text-align:right">124.50 / -0.40%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +26.5%，較5日 +59.0%</td>
+        <td style="text-align:left">2026/06 MoM -27.13%，YoY -53.65%，YTD YoY +52.84%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2882國泰金</td>
+        <td style="text-align:right">94.30 / -3.08%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +81.2%，較5日 +79.0%</td>
+        <td style="text-align:left">2026/06 MoM +28.92%，YoY -42.04%，YTD YoY +22.91%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2883凱基金</td>
+        <td style="text-align:right">30.00 / -1.80%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +20.2%，較5日 +45.8%</td>
+        <td style="text-align:left">2026/06 MoM +15.71%，YoY -23.30%，YTD YoY +128.36%</td>
+        <td style="text-align:left">加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2884玉山金</td>
+        <td style="text-align:right">35.10 / +0.57%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +170.4%，較5日 +189.1%</td>
+        <td style="text-align:left">2026/06 MoM +1.12%，YoY +25.30%，YTD YoY +24.84%</td>
+        <td style="text-align:left">加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2885元大金</td>
+        <td style="text-align:right">65.00 / -2.55%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +153.1%，較5日 +154.4%</td>
+        <td style="text-align:left">2026/06 MoM -7.92%，YoY +72.83%，YTD YoY +84.79%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2886兆豐金</td>
+        <td style="text-align:right">47.60 / +2.15%</td>
+        <td style="text-align:left">站上短中期與長期均線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +39.5%，較5日 +125.0%</td>
+        <td style="text-align:left">2026/06 MoM -3.31%，YoY +1.53%，YTD YoY +17.14%</td>
+        <td style="text-align:left">拉回加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2890永豐金</td>
+        <td style="text-align:right">40.00 / +0.38%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +61.4%，較5日 +86.1%</td>
+        <td style="text-align:left">2026/06 MoM -2.95%，YoY +50.94%，YTD YoY +55.23%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">2892第一金</td>
+        <td style="text-align:right">34.10 / +0.44%</td>
+        <td style="text-align:left">站上 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +21.3%，較5日 +65.1%</td>
+        <td style="text-align:left">2026/06 MoM -1.02%，YoY +9.73%，YTD YoY +12.55%</td>
+        <td style="text-align:left">加碼</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <h3>個股操作表</h3>
+<div class="table-wrap">
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th style="text-align:left">類別</th>
+        <th style="text-align:left">標的</th>
+        <th style="text-align:right">最新/較前一日漲跌</th>
+        <th style="text-align:left">均線位置</th>
+        <th style="text-align:left">成交量分析</th>
+        <th style="text-align:left">營收</th>
+        <th style="text-align:left">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">2357華碩</td>
+        <td style="text-align:right">700.00 / -2.10%</td>
+        <td style="text-align:left">跌破 5 日、月線與季線，略站上 10 日線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +74.6%，較5日 +30.7%</td>
+        <td style="text-align:left">2026/06 MoM +54.46%，YoY +55.63%，YTD YoY +38.85%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">2376技嘉</td>
+        <td style="text-align:right">325.00 / -3.56%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +57.3%，較5日 +120.3%</td>
+        <td style="text-align:left">2026/06 MoM -12.56%，YoY +68.55%，YTD YoY +48.36%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">2377微星</td>
+        <td style="text-align:right">141.50 / -2.41%</td>
+        <td style="text-align:left">拉回但仍站上月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +81.6%，較5日 +21.5%</td>
+        <td style="text-align:left">2026/06 MoM +12.39%，YoY -9.23%，YTD YoY -7.56%</td>
+        <td style="text-align:left">小量承接</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">2382廣達</td>
+        <td style="text-align:right">325.50 / -7.53%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，貼近半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +0.6%，較5日 +79.0%</td>
+        <td style="text-align:left">2026/06 MoM +23.66%，YoY +102.87%，YTD YoY +86.48%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">3008大立光</td>
+        <td style="text-align:right">4010.00 / -5.87%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -34.2%，較5日 -17.4%</td>
+        <td style="text-align:left">2026/06 MoM -19.18%，YoY -10.46%，YTD YoY +10.88%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">AIPC手機概念股</td>
+        <td style="text-align:left">5203訊連</td>
+        <td style="text-align:right">65.10 / -3.41%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +316.3%，較5日 +189.4%</td>
+        <td style="text-align:left">2026/06 MoM +4.89%，YoY -9.77%，YTD YoY -4.76%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">機器人與自動化</td>
+        <td style="text-align:left">2049上銀</td>
+        <td style="text-align:right">306.00 / -7.83%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +26.3%，較5日 +32.6%</td>
+        <td style="text-align:left">2026/06 MoM +2.98%，YoY +31.62%，YTD YoY +18.05%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">先進封裝CoWoS概念</td>
+        <td style="text-align:left">2449京元電子</td>
+        <td style="text-align:right">286.50 / -9.91%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +20.8%，較5日 +78.5%</td>
+        <td style="text-align:left">2026/06 MoM -4.11%，YoY +28.64%，YTD YoY +36.08%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">先進封裝CoWoS概念</td>
+        <td style="text-align:left">3711日月光投控</td>
+        <td style="text-align:right">614.00 / -9.97%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +17.8%，較5日 +30.3%</td>
+        <td style="text-align:left">2026/06 MoM +4.36%，YoY +32.86%，YTD YoY +22.02%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">先進封裝CoWoS概念</td>
+        <td style="text-align:left">6223旺矽</td>
+        <td style="text-align:right">5600.00 / -9.97%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +59.4%，較5日 +72.9%</td>
+        <td style="text-align:left">2026/06 MoM -3.90%，YoY +65.07%，YTD YoY +49.61%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">先進封裝CoWoS概念</td>
+        <td style="text-align:left">6239力成</td>
+        <td style="text-align:right">288.00 / -9.00%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +238.0%，較5日 +214.2%</td>
+        <td style="text-align:left">2026/06 MoM -3.72%，YoY +21.71%，YTD YoY +32.41%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">矽晶圓與晶片代工</td>
+        <td style="text-align:left">2303聯電</td>
+        <td style="text-align:right">144.00 / -10.00%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +184.9%，較5日 +255.1%</td>
+        <td style="text-align:left">2026/06 MoM +0.79%，YoY +22.85%，YTD YoY +11.28%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">矽晶圓與晶片代工</td>
+        <td style="text-align:left">2330台積電</td>
+        <td style="text-align:right">2290.00 / -7.29%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +170.2%，較5日 +201.2%</td>
+        <td style="text-align:left">2026/06 MoM +6.16%，YoY +67.87%，YTD YoY +35.61%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">矽晶圓與晶片代工</td>
+        <td style="text-align:left">6770力積電</td>
+        <td style="text-align:right">68.90 / -9.93%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 -39.3%，較5日 +44.7%</td>
+        <td style="text-align:left">2026/06 MoM +12.19%，YoY +68.75%，YTD YoY +37.81%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">2454聯發科</td>
+        <td style="text-align:right">3370.00 / -8.92%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +70.7%，較5日 +60.4%</td>
+        <td style="text-align:left">2026/06 MoM +22.30%，YoY +2.80%，YTD YoY -0.77%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">2458義隆</td>
+        <td style="text-align:right">164.50 / -6.27%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -0.7%，較5日 -11.2%</td>
+        <td style="text-align:left">2026/06 MoM +5.48%，YoY +7.13%，YTD YoY +4.54%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">3034聯詠</td>
+        <td style="text-align:right">460.50 / -2.33%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 +36.7%，較5日 -17.0%</td>
+        <td style="text-align:left">2026/06 MoM +6.48%，YoY +18.96%，YTD YoY -2.75%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">3035智原</td>
+        <td style="text-align:right">184.00 / -9.58%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +102.6%，較5日 +66.0%</td>
+        <td style="text-align:left">2026/06 MoM +52.40%，YoY +26.57%，YTD YoY -50.61%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">3443創意</td>
+        <td style="text-align:right">3835.00 / -8.36%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +175.8%，較5日 +69.0%</td>
+        <td style="text-align:left">2026/06 MoM +5.44%，YoY +103.72%，YTD YoY +93.05%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">IC設計&amp;IP概念</td>
+        <td style="text-align:left">5274信驊</td>
+        <td style="text-align:right">12950.00 / -6.87%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +30.1%，較5日 +20.8%</td>
+        <td style="text-align:left">2026/06 MoM +2.19%，YoY +67.47%，YTD YoY +62.77%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">液冷散熱概念</td>
+        <td style="text-align:left">3017奇鋐</td>
+        <td style="text-align:right">2200.00 / -1.12%</td>
+        <td style="text-align:left">站上 5 日線但低於 10 日、月線與季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +30.1%，較5日 +114.8%</td>
+        <td style="text-align:left">2026/06 MoM +11.01%，YoY +66.11%，YTD YoY +85.46%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">液冷散熱概念</td>
+        <td style="text-align:left">3653健策</td>
+        <td style="text-align:right">3210.00 / -5.45%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線，仍在年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +7.4%，較5日 +43.3%</td>
+        <td style="text-align:left">2026/06 MoM +14.54%，YoY +57.64%，YTD YoY +26.64%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">重電&amp;綠能概念</td>
+        <td style="text-align:left">2308台達電</td>
+        <td style="text-align:right">1740.00 / -8.66%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +43.4%，較5日 +69.4%</td>
+        <td style="text-align:left">2026/06 MoM +11.26%，YoY +55.43%，YTD YoY +41.02%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">2313華通</td>
+        <td style="text-align:right">212.00 / -9.98%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td style="text-align:left">較前日 -40.7%，較5日 -27.3%</td>
+        <td style="text-align:left">2026/06 MoM +2.27%，YoY +20.96%，YTD YoY +13.20%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">2383台光電</td>
+        <td style="text-align:right">4495.00 / -9.92%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +112.5%，較5日 +104.8%</td>
+        <td style="text-align:left">2026/06 MoM +13.54%，YoY +120.69%，YTD YoY +81.82%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">3037欣興</td>
+        <td style="text-align:right">794.00 / -9.98%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +3.2%，較5日 +11.1%</td>
+        <td style="text-align:left">2026/06 MoM +5.95%，YoY +36.31%，YTD YoY +28.42%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">3189景碩</td>
+        <td style="text-align:right">693.00 / -10.00%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +33.3%，較5日 +23.6%</td>
+        <td style="text-align:left">2026/06 MoM +0.58%，YoY +32.27%，YTD YoY +29.79%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">6213聯茂</td>
+        <td style="text-align:right">319.00 / -1.85%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +154.8%，較5日 +79.3%</td>
+        <td style="text-align:left">2026/06 MoM +10.80%，YoY +47.94%，YTD YoY +25.62%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">PCB載板&amp;SiC</td>
+        <td style="text-align:left">8046南電</td>
+        <td style="text-align:right">1150.00 / -9.80%</td>
+        <td style="text-align:left">拉回但仍站上月線、季線、半年線與年線</td>
+        <td style="text-align:left">較前日 -15.1%，較5日 -6.3%</td>
+        <td style="text-align:left">2026/06 MoM +5.50%，YoY +50.03%，YTD YoY +37.20%</td>
+        <td style="text-align:left">小量承接</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">再生循環&amp;稀有金屬</td>
+        <td style="text-align:left">7610聯友金屬</td>
+        <td style="text-align:right">2410.00 / -7.31%</td>
+        <td style="text-align:left">低於 5 日線，但站上 10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +16.5%，較5日 +65.6%</td>
+        <td style="text-align:left">2026/06 MoM +22.28%，YoY +555.43%，YTD YoY N/A</td>
+        <td style="text-align:left">拉回加碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">記憶體</td>
+        <td style="text-align:left">2344華邦電</td>
+        <td style="text-align:right">155.00 / -9.88%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -28.0%，較5日 +2.3%</td>
+        <td style="text-align:left">2026/06 MoM +2.98%，YoY +189.88%，YTD YoY +139.20%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">記憶體</td>
+        <td style="text-align:left">2408南亞科</td>
+        <td style="text-align:right">395.50 / -9.91%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -4.2%，較5日 -18.4%</td>
+        <td style="text-align:left">2026/06 MoM +6.21%，YoY +621.34%，YTD YoY +643.12%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">記憶體</td>
+        <td style="text-align:left">8299群聯</td>
+        <td style="text-align:right">1785.00 / -9.85%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +22.7%，較5日 +68.8%</td>
+        <td style="text-align:left">2026/06 MoM +8.87%，YoY +301.00%，YTD YoY +243.08%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">被動元件</td>
+        <td style="text-align:left">2327國巨</td>
+        <td style="text-align:right">699.00 / -9.92%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 -24.7%，較5日 -33.9%</td>
+        <td style="text-align:left">2026/06 MoM +2.00%，YoY +38.91%，YTD YoY +29.35%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電腦週邊&amp;電源供應</td>
+        <td style="text-align:left">6409旭隼科技</td>
+        <td style="text-align:right">967.00 / -5.20%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +23.8%，較5日 +8.5%</td>
+        <td style="text-align:left">2026/06 MoM +4.85%，YoY +5.72%，YTD YoY -8.79%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電腦週邊&amp;電源供應</td>
+        <td style="text-align:left">2301光寶科</td>
+        <td style="text-align:right">196.50 / -9.86%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +56.0%，較5日 +57.2%</td>
+        <td style="text-align:left">2026/06 MoM +7.50%，YoY +36.98%，YTD YoY +25.08%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">半導體廠房</td>
+        <td style="text-align:left">6139亞翔</td>
+        <td style="text-align:right">799.00 / -7.95%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +23.3%，較5日 +58.7%</td>
+        <td style="text-align:left">2026/06 MoM -1.19%，YoY +49.70%，YTD YoY +69.88%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">半導體廠房</td>
+        <td style="text-align:left">6196帆宣</td>
+        <td style="text-align:right">542.00 / -8.14%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -8.0%，較5日 +44.9%</td>
+        <td style="text-align:left">2026/06 MoM +8.92%，YoY +120.99%，YTD YoY +39.48%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電子代工/EMS</td>
+        <td style="text-align:left">2312金寶電子</td>
+        <td style="text-align:right">31.30 / -6.85%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td class="volume-positive" style="text-align:left">較前日 +86.8%，較5日 +34.4%</td>
+        <td style="text-align:left">2026/06 MoM +20.22%，YoY +32.70%，YTD YoY -5.29%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電子代工/EMS</td>
+        <td style="text-align:left">2317鴻海</td>
+        <td style="text-align:right">234.00 / -3.51%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，貼近半年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +81.1%，較5日 +115.9%</td>
+        <td style="text-align:left">2026/06 MoM -4.38%，YoY +52.11%，YTD YoY +34.99%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電子代工/EMS</td>
+        <td style="text-align:left">2392正崴</td>
+        <td style="text-align:right">35.55 / -2.60%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +211.9%，較5日 +212.0%</td>
+        <td style="text-align:left">2026/06 MoM -9.07%，YoY -42.48%，YTD YoY -15.43%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電子代工/EMS</td>
+        <td style="text-align:left">3231緯創</td>
+        <td style="text-align:right">139.00 / -5.12%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線與半年線，貼近年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +25.6%，較5日 +73.2%</td>
+        <td style="text-align:left">2026/06 MoM +10.90%，YoY +53.85%，YTD YoY +94.01%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">電子通路</td>
+        <td style="text-align:left">3702大聯大</td>
+        <td style="text-align:right">109.50 / -3.52%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 -5.6%，較5日 -20.1%</td>
+        <td style="text-align:left">2026/06 MoM +39.77%，YoY +131.85%，YTD YoY +55.18%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">面板</td>
+        <td style="text-align:left">3481群創</td>
+        <td style="text-align:right">52.60 / -8.20%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +41.0%，較5日 +21.0%</td>
+        <td style="text-align:left">2026/06 MoM +5.11%，YoY +17.25%，YTD YoY +16.12%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">面板</td>
+        <td style="text-align:left">6176瑞儀</td>
+        <td style="text-align:right">84.50 / -4.63%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線、季線、半年線與年線</td>
+        <td class="volume-positive" style="text-align:left">較前日 +99.0%，較5日 +73.6%</td>
+        <td style="text-align:left">2026/06 MoM +0.40%，YoY -15.03%，YTD YoY -5.98%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">半導體材料</td>
+        <td style="text-align:left">1560中砂</td>
+        <td style="text-align:right">656.00 / -9.89%</td>
+        <td style="text-align:left">跌破 5 日、10 日、月線與季線，仍在半年線、年線上</td>
+        <td style="text-align:left">較前日 -43.2%，較5日 +23.9%</td>
+        <td style="text-align:left">2026/06 MoM +0.45%，YoY +16.39%，YTD YoY +23.02%</td>
+        <td style="text-align:left">減碼</td>
+      </tr>
+      <tr>
+        <td style="text-align:left">生技醫療</td>
+        <td style="text-align:left">6446藥華藥</td>
+        <td style="text-align:right">1195.00 / -5.16%</td>
+        <td style="text-align:left">低於月線、站上季線</td>
+        <td style="text-align:left">較前日 -23.4%，較5日 +21.0%</td>
+        <td style="text-align:left">2026/06 MoM -5.11%，YoY +94.88%，YTD YoY +74.59%</td>
+        <td style="text-align:left">持有</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <p>6274台燿屬 PCB載板&amp;SiC（CCL/電子材料），本次市場資料有價格與營收，2026/06 營收 MoM +2.10%、YoY +107.72%、YTD YoY +84.03%，但 `sheet_trade_context.json` 在 Yahoo fallback 後仍未提供可比較均線位置，因此未列入操作表。日圓匯率同樣缺乏可比較均線，僅在敘述中反向解讀。整體操作上，科技與半導體主軸不是基本面全面轉弱，而是高位帶量跌破短中期均線；槓桿資金退場、外資期貨偏空與美國核心通膨黏著，使短線應以降槓桿、守季線/半年線與等待量縮止跌為主。</p>
 
 
 
@@ -10432,7 +11260,7 @@
 
 
 
-    <div class="footer">Generated by TaiwanStockBot on 2026-07-19 11:45:38.</div>
+    <div class="footer">Generated by TaiwanStockBot on 2026-07-19 12:16:55.</div>
 
 
 
@@ -10560,7 +11388,7 @@
 
 
 
-    const currentVersion = '20260719_1145';
+    const currentVersion = '20260719_1216';
 
 
 

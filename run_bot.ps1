@@ -36681,6 +36681,8 @@ Coverage:
 - For active Taiwan securities, compare live prices against the Google Sheet 5/10/month/quarter/half/year moving averages, plus volume versus previous trading day and 5-day average when available, and produce clear buy/hold/sell or add/reduce guidance.
 
 - Do not summarize away active Taiwan securities that have a valid moving-average position in sheet_trade_context.json. Include every such row in the ETF, 金融, or 個股 operation tables; omit only rows that still lack comparable moving averages after the Yahoo fallback, and mention omitted rows in narrative if material.
+- Descriptive paragraphs are additive and must never replace tables that existed in the established report format. Always retain four separate Markdown tables: `市場總覽`, `ETF 操作表`, `金融股操作表`, and `個股操作表`. Each operation table must contain every applicable row with valid moving-average context; monthly revenue and macro commentary belong outside or alongside these tables, not instead of them.
+- If the institutional-futures section says the cache was empty, treat that as a pipeline failure to fetch rather than permission to omit the signal. The data stage must attempt the official TAIFEX open-interest table first; report FINI net position and day-over-day change when the live fallback succeeds, and only state unavailable after an explicit fetch error.
 
 
 
@@ -37814,6 +37816,19 @@ Coverage:
 
 
 
+
+    $ArticleTableValidation = Get-Content -LiteralPath $FinalArticleFile -Raw -Encoding utf8
+    $RequiredTableSections = @(
+        @{ Name = '市場總覽'; Pattern = '(?ms)^(?:#{1,4}\s*)?\*{0,2}市場總覽[^\r\n]*\r?\n.{0,1000}?^\|[^\r\n]+\|\r?\n^\|[-:|\s]+\|' },
+        @{ Name = 'ETF 操作表'; Pattern = '(?ms)^(?:#{1,4}\s*)?\*{0,2}ETF[^\r\n]*操作[^\r\n]*\r?\n.{0,1000}?^\|[^\r\n]+\|\r?\n^\|[-:|\s]+\|' },
+        @{ Name = '金融股操作表'; Pattern = '(?ms)^(?:#{1,4}\s*)?\*{0,2}金融[^\r\n]*操作[^\r\n]*\r?\n.{0,1000}?^\|[^\r\n]+\|\r?\n^\|[-:|\s]+\|' },
+        @{ Name = '個股操作表'; Pattern = '(?ms)^(?:#{1,4}\s*)?\*{0,2}個股[^\r\n]*操作[^\r\n]*\r?\n.{0,1000}?^\|[^\r\n]+\|\r?\n^\|[-:|\s]+\|' }
+    )
+    foreach ($RequiredTable in $RequiredTableSections) {
+        if ($ArticleTableValidation -notmatch $RequiredTable.Pattern) {
+            throw ("Final article is missing required Markdown table: " + $RequiredTable.Name)
+        }
+    }
 
     Write-Host '=== Final article ready ==='
 
@@ -40935,6 +40950,7 @@ Coverage:
     if ($env:TAIWANSTOCKBOT_SKIP_EMAIL -match '^(1|true|yes)$') {
         Write-Host "=== Email not sent by request ==="
     }
+
     elseif ($EmailSent) {
         Write-Host "=== Sent to: $RecipientEmail ==="
     }
