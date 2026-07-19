@@ -289,7 +289,7 @@ $env:PYTHONUTF8 = '1'
 
 
 
-$WorkDir = 'F:\TaiwanStockBot'
+$WorkDir = $PSScriptRoot
 
 
 
@@ -513,6 +513,12 @@ $SheetContextFile = Join-Path $WorkDir 'sheet_trade_context.json'
 
 
 $SheetContextCacheFile = Join-Path $ReportDir 'sheet_trade_context_cache.json'
+
+$UsMacroContextFile = Join-Path $WorkDir 'us_macro_context.json'
+
+$UsMacroContextCacheFile = Join-Path $WorkDir 'data\us_macro_context_cache.json'
+
+$UsMacroContextScript = Join-Path $WorkDir 'fetch_us_macro_context.py'
 
 
 
@@ -36320,6 +36326,14 @@ try {
 
     }
 
+    Write-Host '=== 1c/5 Build U.S. CPI and Treasury-yield context ==='
+    if (Test-Path -LiteralPath $UsMacroContextScript) {
+        & $PythonExe $UsMacroContextScript --output $UsMacroContextFile --cache $UsMacroContextCacheFile
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning 'U.S. macro context generation failed; continuing without CPI/yield context.'
+        }
+    }
+
 
 
 
@@ -36655,6 +36669,11 @@ Coverage:
 
 
 - Incorporate the appended Yahoo margin balance summary as a liquidity and sentiment signal; discuss financing balance change, short balance change, and margin ratio when available. Also incorporate the TAIFEX institutional futures summary and explain FINI net position and its day-over-day change when available. Explain gold and oil moves in the narrative rather than leaving them as bare quotes. Also explain Taiwan's latest three months of export values and the monthly trend. For individual Taiwan stocks, include the latest revenue month with MoM, YoY, and year-to-date YoY when available; do not list revenue amount in the report, and skip ETFs and indices when monthly revenue does not apply.
+- Use the `monthly_revenue` section even when Google Sheet moving averages are unavailable. The pipeline actively fetches missing or stale individual-stock revenue rows before analysis. Only say revenue is unavailable for specific stocks that remain absent after `refresh_attempted_count` and the recorded fetch errors; never summarize a database-wide absence without acknowledging the attempted live fetch.
+- Always review the appended U.S. macro context. Include a concise macro paragraph covering the Cleveland Fed headline/core CPI nowcast (clearly labeled as a nowcast, not official BLS CPI), the effective federal funds rate and target range, and the latest 2Y/10Y/30Y Treasury yields with daily basis-point moves and the 10Y-minus-2Y curve spread when available.
+- Immediately translate the CPI nowcast into plain Chinese. Use MoM to say whether Cleveland Fed expects overall and core prices to rise, fall, or stay roughly flat versus the prior month, then use YoY to explain how much higher/lower prices remain versus a year earlier. Explicitly distinguish disinflation from deflation: a lower YoY rate is not falling prices when MoM remains positive. For the current example, say that headline prices are expected to be roughly flat/slightly lower MoM, while core prices still rise modestly, so underlying inflation has not disappeared.
+- Connect CPI and yields to the report: sticky/rising core CPI or rising 2Y/10Y yields tighten financial conditions and pressure long-duration growth/technology valuations; higher yields are unfavorable for Treasury prices and TLT, while falling yields imply the reverse. Do not invent values when a macro field is unavailable, and identify cached macro data as cached.
+- End the macro paragraph with an explicit plain-Chinese verdict: `偏好`, `偏壞`, or `好壞參半`, separately for Taiwan technology stocks, financials, and TLT. A positive 10Y-minus-2Y spread is structurally healthier than inversion but is not automatically bullish; state whether the spread widened or narrowed that day. For the current +37bp example, note that the curve is positive but narrowed about 4bp as 2Y rose and 10Y fell, while sticky core inflation remains unfavorable for rapid rate cuts and high-valuation technology stocks.
 - For the semiconductor index, use SOXX as the moving-average proxy and note that the annotation is based on SOXX moving averages.
 
 
@@ -37329,6 +37348,13 @@ Coverage:
 
 
 
+    }
+
+    if (Test-Path -LiteralPath $UsMacroContextFile) {
+        $UsMacroContextText = Get-Content -LiteralPath $UsMacroContextFile -Raw -Encoding utf8
+        if (-not [string]::IsNullOrWhiteSpace($UsMacroContextText)) {
+            $AnalyzerInput = $AnalyzerInput.TrimEnd() + "`r`n`r`n=== U.S. CPI / POLICY RATE / TREASURY YIELD CONTEXT ===`r`n" + $UsMacroContextText.Trim()
+        }
     }
 
 
@@ -39421,6 +39447,8 @@ Coverage:
 
     $MailAttachments = @($HtmlReportFile, $FinalArticleFile)
 
+    $EmailSent = $false
+
 
 
 
@@ -39457,7 +39485,13 @@ Coverage:
         Write-Host "=== Email skipped: TAIWANSTOCKBOT_SKIP_EMAIL=$($env:TAIWANSTOCKBOT_SKIP_EMAIL) ==="
     }
     else {
-        Send-ReportViaOutlook -To $RecipientEmail -Subject $MailSubject -HtmlBody $HtmlDocument -Attachments $MailAttachments
+        try {
+            Send-ReportViaOutlook -To $RecipientEmail -Subject $MailSubject -HtmlBody $HtmlDocument -Attachments $MailAttachments
+            $EmailSent = $true
+        }
+        catch {
+            Write-Warning ("Email delivery failed; continuing with Google Workspace and Firebase sync: " + $_.Exception.Message)
+        }
     }
 
 
@@ -40898,7 +40932,15 @@ Coverage:
 
 
 
-    if ($env:TAIWANSTOCKBOT_SKIP_EMAIL -match '^(1|true|yes)$') { Write-Host "=== Email not sent by request ===" } else { Write-Host "=== Sent to: $RecipientEmail ===" }
+    if ($env:TAIWANSTOCKBOT_SKIP_EMAIL -match '^(1|true|yes)$') {
+        Write-Host "=== Email not sent by request ==="
+    }
+    elseif ($EmailSent) {
+        Write-Host "=== Sent to: $RecipientEmail ==="
+    }
+    else {
+        Write-Host "=== Email not sent; report generation and publishing continued ==="
+    }
 
 
 

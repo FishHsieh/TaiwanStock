@@ -40,7 +40,7 @@ from googleapiclient.discovery import build
 
 
 from publish_google_workspace import parse_market_data
-from bot_database import log_source_fetch, upsert_monthly_revenue
+from bot_database import load_active_symbols, load_latest_monthly_revenue_cache, log_source_fetch, upsert_monthly_revenue
 
 
 
@@ -509,6 +509,114 @@ def fetch_yahoo_revenue_summary(ticker_symbol: str) -> dict[str, Any] | None:
         "revenue_summary": summary,
         "revenue_source": "Yahoo Finance revenue page",
     }
+
+
+def expected_revenue_period(now: datetime | None = None) -> str:
+    current = now or datetime.now()
+    months_back = 1 if current.day >= 11 else 2
+    year = current.year
+    month = current.month - months_back
+    while month <= 0:
+        year -= 1
+        month += 12
+    return f"{year:04d}/{month:02d}"
+
+
+def refresh_monthly_revenue_context(market_rows) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    del market_rows  # Revenue coverage is driven by symbol_master, not quote availability.
+    revenue_eligible_items = [
+        item
+        for item in load_active_symbols()
+        if str(item.get("market") or "") == "taiwan"
+        and str(item.get("asset_type") or "") in {"stock", "financial"}
+    ]
+    targets = {
+        str(item.get("symbol") or ""): str(item.get("display_name") or item.get("symbol") or "")
+        for item in revenue_eligible_items
+        if str(item.get("symbol") or "")
+    }
+    expected_period = expected_revenue_period()
+    try:
+        cached = load_latest_monthly_revenue_cache()
+    except Exception:
+        cached = {}
+
+    revenue_cache = {symbol: dict(cached[symbol]) for symbol in targets if cached.get(symbol)}
+    refresh_targets = {
+        symbol
+        for symbol in targets
+        if str(revenue_cache.get(symbol, {}).get("revenue_month") or "") < expected_period
+    }
+    errors: list[str] = []
+    if refresh_targets:
+        with ThreadPoolExecutor(max_workers=min(8, len(refresh_targets))) as executor:
+            futures = {
+                executor.submit(fetch_yahoo_revenue_summary, symbol): symbol
+                for symbol in refresh_targets
+            }
+            for future in as_completed(futures):
+                symbol = futures[future]
+                try:
+                    revenue_summary = future.result()
+                    if not revenue_summary:
+                        errors.append(f"{symbol}: no usable Yahoo revenue row")
+                        log_source_fetch("Yahoo Finance revenue page", symbol, "empty")
+                        continue
+                    revenue_cache[symbol] = revenue_summary
+                    upsert_monthly_revenue(symbol, revenue_summary)
+                    log_source_fetch(
+                        "Yahoo Finance revenue page",
+                        symbol,
+                        "ok",
+                        asof_key=str(revenue_summary.get("revenue_month") or ""),
+                    )
+                except Exception as exc:
+                    errors.append(f"{symbol}: {exc}")
+                    try:
+                        log_source_fetch("Yahoo Finance revenue page", symbol, "error")
+                    except Exception:
+                        pass
+
+    rows = []
+    for symbol in sorted(targets):
+        revenue = revenue_cache.get(symbol)
+        if not revenue:
+            continue
+        rows.append({"label": targets[symbol], "ticker": symbol, **revenue})
+    metadata = {
+        "expected_period": expected_period,
+        "target_count": len(targets),
+        "available_count": len(rows),
+        "refresh_attempted_count": len(refresh_targets),
+        "errors": errors,
+        "rows": rows,
+    }
+    return revenue_cache, metadata
+
+
+def attach_monthly_revenue_context(
+    context: dict[str, Any],
+    revenue_cache: dict[str, dict[str, Any]],
+    revenue_metadata: dict[str, Any],
+) -> None:
+    revenue_keys = {
+        "revenue_month",
+        "revenue_mom",
+        "revenue_yoy",
+        "revenue_ytd_yoy",
+        "revenue_summary",
+        "revenue_source",
+        "revenue_fetched_at",
+    }
+    for row in context.get("rows", []):
+        if not isinstance(row, dict):
+            continue
+        for key in revenue_keys:
+            row.pop(key, None)
+        revenue = revenue_cache.get(str(row.get("ticker") or ""))
+        if revenue:
+            row.update(revenue)
+    context["monthly_revenue"] = revenue_metadata
 
 def enrich_ma_info(info: dict[str, Any], history_values: dict[str, float | None] | None) -> dict[str, Any]:
 
@@ -1136,11 +1244,24 @@ def main() -> int:
 
     market_data_path = args.market_data
 
+    revenue_cache: dict[str, dict[str, Any]] = {}
+    revenue_metadata: dict[str, Any] = {
+        "expected_period": expected_revenue_period(),
+        "target_count": 0,
+        "available_count": 0,
+        "refresh_attempted_count": 0,
+        "errors": [],
+        "rows": [],
+    }
+
     if not market_data_path.exists():
 
         context = fallback_context(f"missing market data file: {market_data_path}")
 
     else:
+
+        market_rows = load_market_rows(market_data_path)
+        revenue_cache, revenue_metadata = refresh_monthly_revenue_context(market_rows)
 
         credentials_value = args.credentials or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
@@ -1218,8 +1339,6 @@ def main() -> int:
 
                 try:
 
-                    market_rows = load_market_rows(market_data_path)
-
                     sheet_title, sheet_index = build_sheet_index(credentials_path, sheet_id)
 
                     history_targets: set[str] = set()
@@ -1272,58 +1391,6 @@ def main() -> int:
 
 
 
-                    revenue_targets: set[str] = set()
-                    for row in market_rows.rows:
-                        if TAIWAN_EQUITY_TICKER_RE.fullmatch(row.ticker):
-                            revenue_targets.add(row.ticker)
-                    revenue_cache: dict[str, dict[str, Any]] = {}
-                    if revenue_targets:
-                        with ThreadPoolExecutor(max_workers=min(8, len(revenue_targets))) as executor:
-                            futures = {}
-                            for symbol in revenue_targets:
-                                future = executor.submit(fetch_yahoo_revenue_summary, symbol)
-                                futures[future] = symbol
-                            for future in as_completed(futures):
-                                symbol = futures[future]
-                                try:
-
-                                    revenue_summary = future.result()
-
-                                    if revenue_summary:
-
-                                        revenue_cache[symbol] = revenue_summary
-
-                                        try:
-
-                                            upsert_monthly_revenue(symbol, revenue_summary)
-
-                                            log_source_fetch(
-
-                                                "Yahoo Finance revenue page",
-
-                                                symbol,
-
-                                                "ok",
-
-                                                asof_key=str(revenue_summary.get("revenue_month") or ""),
-
-                                            )
-
-                                        except Exception:
-
-                                            pass
-
-                                except Exception:
-
-                                    revenue_cache[symbol] = {}
-
-                                    try:
-
-                                        log_source_fetch("Yahoo Finance revenue page", symbol, "error")
-
-                                    except Exception:
-
-                                        pass
                     context = build_context(market_rows, sheet_title, sheet_index, history_ma_cache, revenue_cache)
 
                     if cache_key is not None and "warning" not in context:
@@ -1338,6 +1405,7 @@ def main() -> int:
 
 
 
+    attach_monthly_revenue_context(context, revenue_cache, revenue_metadata)
     payload = json.dumps(context, ensure_ascii=False, indent=2)
 
     if args.output:
@@ -1359,4 +1427,3 @@ def main() -> int:
 if __name__ == "__main__":
 
     raise SystemExit(main())
-

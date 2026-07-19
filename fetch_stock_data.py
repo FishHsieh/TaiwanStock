@@ -1215,7 +1215,7 @@ TAIWAN_SUFFIXES = (".TW", ".TWO")
 FINANCIAL_TICKERS = {
     "2801.TW", "2892.TW", "2886.TW", "2834.TW", "2812.TW", "2890.TW",
     "2880.TW", "2883.TW", "2884.TW", "2885.TW", "2881.TW", "2882.TW",
-    "2855.TW", "00917.TW",
+    "2855.TW",
 }
 
 COMMODITY_TICKERS = {"GC=F", "CL=F"}
@@ -1291,6 +1291,7 @@ DISPLAY_NAME_OVERRIDES = {
     "00919.TW": "00919群益台灣精選高息",
     "00878.TW": "00878國泰永續高股息",
     "00922.TW": "00922國泰台灣領袖50",
+    "00917.TW": "00917中信特選金融",
 }
 
 
@@ -1632,6 +1633,16 @@ def bootstrap_symbol_master_from_markets() -> None:
     ensure_database()
     seed_category_master()
     if count_active_symbols() > 0:
+        # 00917 is an ETF, not an operating financial company. Repair older
+        # databases that were bootstrapped while it was in FINANCIAL_TICKERS.
+        upsert_symbol(
+            symbol="00917.TW",
+            yahoo_ticker="00917.TW",
+            display_name="00917中信特選金融",
+            asset_type="etf",
+            market="taiwan",
+            category="ETF",
+        )
         return
     for label, ticker_symbol in MARKETS:
         metadata = infer_symbol_metadata(label, ticker_symbol)

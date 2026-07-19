@@ -387,7 +387,7 @@ def load_latest_monthly_revenue_cache(db_path: Path = DATABASE_PATH) -> dict[str
     cache: dict[str, dict[str, Any]] = {}
     for row in rows:
         revenue_month = str(row['revenue_month'] or '').strip()
-        month_label = revenue_month or '????'
+        month_label = revenue_month or '最新月份'
         revenue_mom = row['revenue_mom']
         revenue_yoy = row['revenue_yoy']
         revenue_ytd_yoy = row['revenue_ytd_yoy']
@@ -397,9 +397,9 @@ def load_latest_monthly_revenue_cache(db_path: Path = DATABASE_PATH) -> dict[str
             'revenue_yoy': revenue_yoy,
             'revenue_ytd_yoy': revenue_ytd_yoy,
             'revenue_summary': (
-                f"{month_label} ?? MoM {format_pct(revenue_mom)}?"
-                f"YoY {format_pct(revenue_yoy)}?"
-                f"???? YoY {format_pct(revenue_ytd_yoy)}"
+                f"{month_label} 營收 MoM {format_pct(revenue_mom)}，"
+                f"YoY {format_pct(revenue_yoy)}，"
+                f"今年累計 YoY {format_pct(revenue_ytd_yoy)}"
             ),
             'revenue_source': f"SQLite cache ({str(row['source'] or 'unknown').strip() or 'unknown'})",
             'revenue_fetched_at': row['fetched_at'],
@@ -561,4 +561,3 @@ def load_latest_institutional_futures_snapshot(db_path: Path = DATABASE_PATH) ->
             """
         ).fetchone()
         return dict(row) if row else None
-

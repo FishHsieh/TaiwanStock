@@ -6,6 +6,7 @@ TaiwanStockBot is a daily market-report pipeline for Taiwan stocks, ETFs, and cr
 
 - Collects live market data for Taiwan, Japan, Korea, Vietnam, US indices, FX, commodities, crypto, and selected stocks/ETFs.
 - Reads moving-average context from the canonical Google Sheet and falls back to Yahoo history when sheet cells are missing or `#N/A`.
+- Reviews the Cleveland Fed CPI nowcast, the effective federal funds rate and target range, and official U.S. Treasury 2Y/10Y/30Y yields before generating each analysis.
 - Maintains symbol metadata, categories, and market-hours references in SQLite.
 - Generates a news-style analysis article and a web-friendly HTML report.
 - Syncs outputs to Google Docs / Google Sheets, Firebase Hosting, and email.
@@ -21,6 +22,7 @@ TaiwanStockBot is a daily market-report pipeline for Taiwan stocks, ETFs, and cr
 3. Review the generated artifacts:
    - `market_data.txt`
    - `sheet_trade_context.json`
+   - `us_macro_context.json`
    - `final_article.txt`
    - `Reports/Report_*.html`
 4. Check the web output at `https://vinson-stock-bot.web.app`.
@@ -40,6 +42,7 @@ You normally do not need a global Python or Node install once the project has be
 - `run_bot.ps1` - orchestrates the full workflow
 - `fetch_stock_data.py` - fetches live market data and writes `market_data.txt`
 - `fetch_sheet_trade_context.py` - reads sheet moving averages and caches trade context
+- `fetch_us_macro_context.py` - fetches CPI-nowcast, policy-rate, and Treasury-yield context with a local cache fallback
 - `bot_database.py` - SQLite schema and cache helpers
 - `manage_symbols.py` - maintains tracked symbols and categories
 - `publish_google_workspace.py` - syncs to Google Docs / Sheets
@@ -87,6 +90,7 @@ If the Google Sheet cell is missing or not usable, the pipeline falls back to Ya
 
 - `market_data.txt`
 - `sheet_trade_context.json`
+- `us_macro_context.json`
 - `final_article.txt`
 - `Reports/Report_*.html`
 - `web/index.html`

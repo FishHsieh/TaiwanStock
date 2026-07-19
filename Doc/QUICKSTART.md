@@ -9,6 +9,7 @@ This is the short handoff version. It is not a time limit. It only keeps the min
 3. Check the generated artifacts:
    - `market_data.txt`
    - `sheet_trade_context.json`
+   - `us_macro_context.json`
    - `final_article.txt`
 4. Open the latest HTML report in `Reports\Report_*.html`.
 5. If the public page should be updated, verify the Firebase site:
@@ -41,6 +42,7 @@ Use `--ma-proxy-symbol` when a row should borrow another ticker's moving average
 
 - Pulls live market data.
 - Reads Google Sheet moving averages for trade context.
+- Reviews the Cleveland Fed CPI nowcast, Fed policy-rate context, and official U.S. Treasury 2Y/10Y/30Y yields.
 - Generates an analyzer pass and a writer pass.
 - Publishes a news-style report as HTML.
 - Syncs the result to Google Docs / Sheets.

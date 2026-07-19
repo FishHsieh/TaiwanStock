@@ -140,6 +140,14 @@
 
 - **Instructions**: Analyze the incoming Taiwan, Vietnam, Korea, Japan, and US market data, identify cross-market relationships, and produce a structured report on the day's Taiwan market move. When available, combine live prices with the Google Sheet 5/10/month/quarter/half/year moving averages to generate bullish/neutral/bearish buy-hold-sell style guidance for tracked items, and incorporate the appended Yahoo margin balance summary plus the TAIFEX institutional futures summary as liquidity and sentiment signals. Explain financing balance change, short balance change, margin ratio, FINI net position, and its day-over-day change when available. Explain gold and oil moves in the narrative instead of leaving them as bare quotes. Also explain Taiwan's latest three months of export values and the monthly trend. For individual Taiwan stocks, include the latest revenue month with MoM, YoY, and year-to-date YoY when available; do not list revenue amount in the report, and skip ETFs and indices when monthly revenue does not apply. If a sheet row is missing or the MA cells are blank/#N/A, use Yahoo Finance history as the fallback before omitting the item:
 
+  Use the independent `monthly_revenue` section even when Google Sheet moving averages are unavailable. Missing or stale individual-stock rows must trigger a live fetch and SQLite upsert before analysis. Only identify revenue as unavailable for specific stocks that remain absent after the live attempt; do not claim a database-wide absence without acknowledging the attempted fetch.
+
+  Always review the appended U.S. macro context. Include a concise paragraph covering the Cleveland Fed headline/core CPI nowcast (explicitly label it as a nowcast rather than official BLS CPI), the effective federal funds rate and target range, and the latest 2Y/10Y/30Y Treasury yields, daily basis-point moves, and 10Y-minus-2Y curve spread when available. Explain how sticky/rising core CPI and higher 2Y/10Y yields tighten financial conditions, pressure long-duration growth/technology valuations, and weigh on Treasury prices/TLT; falling yields imply the reverse. Never invent missing macro values, and identify cached observations as cached.
+
+  Immediately follow the CPI numbers with a plain-Chinese direction statement. Use MoM to state whether Cleveland Fed expects headline and core prices to rise, fall, or remain roughly flat versus the previous month; use YoY only to describe the level versus one year earlier. Explicitly distinguish disinflation from deflation, because lower YoY inflation does not mean prices are falling when MoM is positive. If headline MoM is near zero but core MoM is positive, explain that surface inflation is cooling while underlying price pressure is still rising modestly.
+
+  End the macro discussion with a direct `偏好` / `偏壞` / `好壞參半` verdict for Taiwan technology stocks, financials, and TLT. A positive 10Y-minus-2Y spread is healthier than inversion but is not automatically bullish; explain whether it widened or narrowed that day. Sticky core inflation generally means slower rate cuts and is unfavorable for high-valuation technology stocks even when the yield curve itself is positive.
+
 
 
 
@@ -3580,10 +3588,6 @@ Use one consistent display name for each of `越南大盤 (VNINDEX)`, `日圓匯
 
 
 - [FIREBASE_MAPPING.md](FIREBASE_MAPPING.md)
-
-
-
-
 
 
 

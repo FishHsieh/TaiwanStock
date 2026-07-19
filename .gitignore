@@ -16,8 +16,10 @@ __pycache__/
 
 /market_data.txt
 /sheet_trade_context.json
+/us_macro_context.json
 /taiwanstock.json
 /.firebase/
 
 /data/*.sqlite3
 /data/*.sqlite3-*
+/data/us_macro_context_cache.json

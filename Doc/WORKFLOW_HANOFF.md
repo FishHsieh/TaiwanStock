@@ -10,6 +10,13 @@ This project generates a daily market report, publishes it as HTML, syncs it to 
 
 Use this section as the durable record of what has already been finished. Check it before repeating work.
 
+- 2026-07-19: Added `fetch_us_macro_context.py` and `us_macro_context.json` to every Analyzer run. The report now reviews the Cleveland Fed headline/core CPI nowcast, New York Fed EFFR and target range, and U.S. Treasury 2Y/10Y/30Y yields with daily basis-point changes and the 10Y-minus-2Y curve spread. MacroMicro CPI and target-rate pages are retained as reference links, while stable automation uses official sources and falls back to `data\us_macro_context_cache.json`.
+- 2026-07-19: CPI reporting now must translate the Cleveland Fed nowcast into plain Chinese direction: MoM says whether prices are expected to rise/fall/stay flat versus the prior month, YoY describes the level versus a year earlier, and the article must distinguish disinflation from deflation.
+- 2026-07-19: Macro interpretation now records the daily change in the 10Y-minus-2Y spread and must end with a plain `偏好` / `偏壞` / `好壞參半` verdict for Taiwan technology stocks, financials, and TLT. A positive curve is not treated as automatically bullish.
+- 2026-07-19: Outlook email failures now emit a warning and allow Google Workspace/Firebase publishing to continue, which keeps the workflow usable on either project machine even when Outlook COM is unavailable.
+- 2026-07-19: Monthly revenue capture is now independent of Google Sheet credentials and MA-context cache hits. Every run loads SQLite, live-fetches Yahoo revenue for missing or stale Taiwan stock rows, upserts successful results, and appends a top-level `monthly_revenue` section to `sheet_trade_context.json`.
+- 2026-07-19: Monthly-revenue targets now come directly from active `symbol_master` company/financial rows rather than `market_data.txt`, so a stock with a failed or missing same-day quote (for example `6274.TWO`) still receives revenue capture. `00917.TW` was corrected from `financial` to `etf` and is no longer treated as an operating company.
+
 - 2026-07-16: `^TWOII` now uses the official TPEx `indexInfo/inx` source instead of Yahoo, so the OTC index closes and day-over-day change are no longer distorted by the Yahoo fallback.
 - 2026-07-16: Re-ran the full pipeline after the OTC fix; generated `Reports\Report_20260716_1022.html` and `Reports\final_article_20260716_101814.txt`.
 - 2026-07-16: The repository was committed and pushed to `origin/main` at `4b5c1f1`; working tree was clean after the push.
@@ -57,12 +64,14 @@ Use these rules when changing cache, database, or report generation behavior.
 - For closed markets, reuse the latest database snapshot for that market unless the current report date has no stored snapshot yet.
 - Report generation should combine fresh live snapshots with persisted database data, then derive conclusions from the merged state.
 - Monthly revenue applies only to individual Taiwan stocks. Show the latest revenue month, MoM, YoY, and year-to-date YoY; do not list revenue amount in the report.
+- If an active Taiwan stock has no monthly-revenue row, or its latest month is older than the expected reporting month, fetch Yahoo revenue before analysis and persist successful results to SQLite. This must run even when Google Sheet credentials are missing or the MA context is served from cache.
 - ETFs, indices, commodities, FX, crypto, and overseas index rows should skip monthly revenue fields.
 - Long-lived reference data belongs in SQLite: symbol master, ETF Chinese names, category mapping, market hours, source metadata, and manual overrides.
 - Taiwan stock classification is source-backed reference data. Prefer company main business, exchange/Yahoo industry, official company product lines, and CMoney concept pages; do not let the Analyzer invent a category when symbol_master already has one.
 - The canonical report universe is `symbol_master`; `MARKETS` in `fetch_stock_data.py` is now only the bootstrap fallback when the database is empty.
 - The shared runtime database path is data\taiwanstockbot.sqlite3; it is generated locally and ignored by git.
 - Rebuildable intermediate results can stay as cache: Google Sheet response cache, Yahoo history MA cache, latest live snapshot fallback, and generated report-version metadata.
+- U.S. macro context is generated in `us_macro_context.json`; its durable fallback is `data\us_macro_context_cache.json`. Label Cleveland Fed CPI figures as nowcasts, never as official BLS releases.
 ## Symbol Maintenance Workflow
 
 Use this workflow whenever adding or changing a tracked symbol.
@@ -91,6 +100,7 @@ python manage_symbols.py deactivate 9999.TW
 1. `run_bot.ps1` is the main entry point.
 1. `fetch_stock_data.py` collects live market prices and writes `market_data.txt`.
 1. `fetch_sheet_trade_context.py` reads the Google Sheet moving-average data and writes `sheet_trade_context.json`.
+1. `fetch_us_macro_context.py` reads official U.S. CPI-nowcast, policy-rate, and Treasury-yield sources and writes `us_macro_context.json`.
 1. The Analyzer agent reads `market_data.txt` plus `sheet_trade_context.json` and writes `final_article.txt`.
 1. `run_bot.ps1` converts the article into HTML and writes the latest report to `Reports\Report_YYYYMMDD_HHMM.html`.
 1. `publish_google_workspace.py` syncs the article/report into Google Docs and Google Sheets.
@@ -101,6 +111,7 @@ python manage_symbols.py deactivate 9999.TW
 
 - `market_data.txt`
 - `sheet_trade_context.json`
+- `us_macro_context.json`
 - `final_article.txt`
 - `Reports\Report_*.html`
 - `web\index.html`
