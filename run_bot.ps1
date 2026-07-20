@@ -19026,6 +19026,8 @@ function Convert-GoogleWorkspaceLinksToHtml {
 
     )
 
+    return ''
+
 
 
 
@@ -36716,6 +36718,10 @@ Coverage:
 
 
 
+- In narrative conclusions, distinguish price resilience from technical structure. Do not call a stock/ETF "相對抗跌" if its same-day decline is large (roughly worse than -3% or near-limit-down), even if it still holds monthly/quarterly/half-year/year moving averages. For those cases, say "中期結構仍相對完整", "仍守中長期均線", or "未出現爆量破線", and still acknowledge the same-day selloff.
+
+
+
 - Write in a news-report tone, but do not expose prompt instructions, scaffold text, or analysis notes in the final article.
 
 
@@ -39603,7 +39609,7 @@ Coverage:
 
 
 
-    # 7. Background Google Workspace sync and Firebase deploy
+    # 7. Background Firebase deploy
 
 
 
@@ -39667,7 +39673,13 @@ Coverage:
 
 
 
-    Write-Host '=== Background sync scheduled: Google Workspace + Firebase Hosting ==='
+    $SkipSync = $env:TAIWANSTOCKBOT_SKIP_SYNC -match '^(1|true|yes)$'
+
+    if ($SkipSync) {
+        Write-Host "=== Background sync skipped: TAIWANSTOCKBOT_SKIP_SYNC=$($env:TAIWANSTOCKBOT_SKIP_SYNC) ==="
+    }
+    else {
+        Write-Host '=== Background Firebase Hosting deploy scheduled ==='
 
 
 
@@ -39699,7 +39711,7 @@ Coverage:
 
 
 
-    if (Test-Path -LiteralPath $PostReportSyncScript) {
+        if (Test-Path -LiteralPath $PostReportSyncScript) {
 
 
 
@@ -40755,7 +40767,7 @@ Coverage:
 
 
 
-    }
+        }
 
 
 
@@ -40851,6 +40863,7 @@ Coverage:
 
 
 
+    }
     }
 
 

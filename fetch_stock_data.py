@@ -2792,6 +2792,52 @@ def _parse_twse_number(value: str) -> float:
     return float(text)
 
 
+def _twse_report_date(now_taipei: datetime) -> str:
+    return now_taipei.strftime("%Y/%m/%d")
+
+
+def _fetch_twse_taiex_history_rows(
+    session: requests.Session,
+    query_date: str,
+) -> list[tuple[str, float]]:
+    url = f"https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?date={query_date}&response=json"
+    data = fetch_json_with_retry(session, url, timeout=15, retries=4)
+    rows = data.get("data") or []
+    parsed_rows: list[tuple[str, float]] = []
+    for row in rows:
+        if not isinstance(row, list) or len(row) < 5:
+            continue
+        try:
+            data_date = _parse_twse_roc_date(row[0])
+            close_price = _parse_twse_number(row[4])
+        except (TypeError, ValueError):
+            continue
+        parsed_rows.append((data_date, close_price))
+    return parsed_rows
+
+
+def _fetch_twse_market_volume(
+    session: requests.Session,
+    query_date: str,
+) -> float | None:
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={query_date}&type=MS&response=json"
+    data = fetch_json_with_retry(session, url, timeout=15, retries=4)
+    tables = data.get("tables") or []
+    for table in tables:
+        if not isinstance(table, dict):
+            continue
+        title = str(table.get("title") or "")
+        if "大盤統計資訊" not in title:
+            continue
+        for row in table.get("data") or []:
+            if not isinstance(row, list) or len(row) < 3:
+                continue
+            row_name = str(row[0])
+            if row_name.startswith("總計"):
+                return _parse_twse_number(row[2])
+    return None
+
+
 
 
 
@@ -3119,7 +3165,9 @@ def fetch_twse_taiex_snapshot(
 
 
 
-    query_date = datetime.now(TAIPEI_TZ).strftime("%Y%m%d")
+    local_now = datetime.now(TAIPEI_TZ)
+    query_date = local_now.strftime("%Y%m%d")
+    report_date = _twse_report_date(local_now)
 
 
 
@@ -3199,11 +3247,46 @@ def fetch_twse_taiex_snapshot(
 
 
 
-    local_now = datetime.now(TAIPEI_TZ)
-
-
-
     if session_state == "\u6536\u76e4":
+        if latest_date != report_date:
+            history_rows = _fetch_twse_taiex_history_rows(session, query_date)
+            matching_index = next(
+                (index for index, row in enumerate(history_rows) if row[0] == report_date),
+                None,
+            )
+            if matching_index is None:
+                raise RuntimeError(
+                    f"TWSE FMTQIK latest date is {latest_date}, and MI_5MINS_HIST has no {report_date} row"
+                )
+
+            latest_date, latest_price = history_rows[matching_index]
+            previous_price = (
+                history_rows[matching_index - 1][1]
+                if matching_index > 0
+                else parsed_rows[-1][2]
+            )
+            latest_change = latest_price - previous_price
+            latest_volume = _fetch_twse_market_volume(session, query_date)
+            previous_volume = parsed_rows[-1][1]
+            avg5_volume = float(mean(volume_history[-5:])) if volume_history else None
+            pct = (latest_change / previous_price * 100) if previous_price else 0.0
+
+            return MarketSnapshot(
+                label=label,
+                ticker=ticker_symbol,
+                market_kind=market_kind,
+                session_state=session_state,
+                data_date=latest_date,
+                price=latest_price,
+                change=latest_change,
+                pct=pct,
+                volume=latest_volume,
+                previous_volume=previous_volume,
+                avg5_volume=avg5_volume,
+                fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
+                fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+                data_source="live-twse-hist",
+            )
 
 
 

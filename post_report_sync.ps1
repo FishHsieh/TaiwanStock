@@ -4,15 +4,15 @@
     [Parameter(Mandatory = $true)]
     [string]$PythonExe,
     [Parameter(Mandatory = $true)]
-    [string]$GoogleWorkspaceScript,
-    [Parameter(Mandatory = $true)]
-    [string]$MarketDataFile,
-    [Parameter(Mandatory = $true)]
-    [string]$FinalArticleFile,
-    [Parameter(Mandatory = $true)]
     [string]$FirebaseCliExe,
-    [Parameter(Mandatory = $true)]
-    [string]$GoogleWorkspaceStateFile,
+    [Parameter(Mandatory = $false)]
+    [string]$GoogleWorkspaceScript = '',
+    [Parameter(Mandatory = $false)]
+    [string]$MarketDataFile = '',
+    [Parameter(Mandatory = $false)]
+    [string]$FinalArticleFile = '',
+    [Parameter(Mandatory = $false)]
+    [string]$GoogleWorkspaceStateFile = '',
     [Parameter(Mandatory = $false)]
     [string]$NodePortableDir = '',
     [Parameter(Mandatory = $false)]
@@ -28,16 +28,6 @@ Set-Location -LiteralPath $WorkDir
 
 $env:PYTHONIOENCODING = 'utf-8'
 $env:PYTHONUTF8 = '1'
-
-$GoogleWorkspaceConfigFile = Join-Path $WorkDir 'google_workspace.local.ps1'
-if (Test-Path -LiteralPath $GoogleWorkspaceConfigFile) {
-    try {
-        . $GoogleWorkspaceConfigFile
-    }
-    catch {
-        Write-Warning ('Google Workspace local config load failed: ' + $GoogleWorkspaceConfigFile)
-    }
-}
 
 if ($NodePortableDir -and (Test-Path -LiteralPath $NodePortableDir)) {
     $env:PATH = $NodePortableDir + ';' + $env:PATH
@@ -63,25 +53,14 @@ catch {
 }
 
 try {
-    if (Test-Path -LiteralPath $GoogleWorkspaceScript) {
-        Write-Host '=== Background sync: publishing Google Workspace artifacts ==='
-        & $PythonExe $GoogleWorkspaceScript --market-data $MarketDataFile --final-article $FinalArticleFile --title 'TaiwanStockBot 盤中市場報告' --state-file $GoogleWorkspaceStateFile
-        if ($LASTEXITCODE -ne 0) {
-            Write-Warning 'Google Workspace sync failed in background; continuing to Firebase deploy.'
-        }
-    }
-    else {
-        Write-Warning ('Could not find Google Workspace sync script: ' + $GoogleWorkspaceScript)
-    }
-
     if (Test-Path -LiteralPath $FirebaseCliExe) {
-        Write-Host '=== Background sync: deploying Firebase Hosting ==='
+        Write-Host '=== Deploying Firebase Hosting ==='
         & $FirebaseCliExe deploy --only hosting --non-interactive
         if ($LASTEXITCODE -ne 0) {
-            Write-Warning 'Firebase deploy failed in background.'
+            Write-Warning 'Firebase deploy failed.'
         }
         else {
-            Write-Host 'Firebase deploy completed in background.'
+            Write-Host 'Firebase deploy completed.'
         }
     }
     else {
