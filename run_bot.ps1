@@ -36682,6 +36682,12 @@ Coverage:
 
 - For active Taiwan securities, compare live prices against the Google Sheet 5/10/month/quarter/half/year moving averages, plus volume versus previous trading day and 5-day average when available, and produce clear buy/hold/sell or add/reduce guidance.
 
+- Always include a dedicated narrative section titled `產業龍頭觀察` before the operation tables. It must include `2330台積電` (晶圓代工), `2454聯發科` (IC 設計), `2308台達電` (電源／資料中心基礎設施), `2383台光電` (高階 CCL), `2327國巨` (被動元件), `3711日月光投控` (封裝測試), and `2317鴻海` (電子代工／AI 伺服器) whenever their current data is available. Add up to three other leaders from distinct industries only when useful.
+- Give each leader a compact but substantive comment of 2-4 sentences. Combine: (1) same-day price performance and moving-average structure, (2) volume versus the previous day and 5-day average, (3) latest monthly-revenue MoM/YoY/YTD YoY when applicable, (4) its role in the industry and which market or demand signal in the supplied data matters to it, and (5) a clear short-term watch/hold/add/reduce conclusion. Distinguish a company's long-term industry leadership from its current technical condition.
+- Do not invent orders, customers, earnings guidance, market share changes, capacity plans, or news that is absent from the supplied inputs. Label cross-market or demand implications as analysis/inference rather than fact. Use the full ticker plus Chinese company name in every leader subheading or opening phrase.
+
+- Add a dedicated `ETF 分組觀察` section and keep the named ETFs grouped in this exact order in both this discussion and the `ETF 操作表`: `市值型 ETF` = 0050、009816; `主動型國內 ETF` = 00981A、00403A、00991A; `主動型國外 ETF` = 00988A、00990A; `國外 ETF` = 00909、00895、00830、00757、00735、00924、00876、00910; `高股息 ETF` = 0056、00919、00878、00900、00713. Use each ETF's full Chinese display name. For every named ETF with data, show latest price/change, the full 5-day/10-day/monthly/quarterly/half-year/yearly moving-average position, volume context, and a concise conclusion. Append other active ETFs after these required groups rather than omitting them.
+
 - Do not summarize away active Taiwan securities that have a valid moving-average position in sheet_trade_context.json. Include every such row in the ETF, 金融, or 個股 operation tables; omit only rows that still lack comparable moving averages after the Yahoo fallback, and mention omitted rows in narrative if material.
 - Descriptive paragraphs are additive and must never replace tables that existed in the established report format. Always retain four separate Markdown tables: `市場總覽`, `ETF 操作表`, `金融股操作表`, and `個股操作表`. Each operation table must contain every applicable row with valid moving-average context; monthly revenue and macro commentary belong outside or alongside these tables, not instead of them.
 - If the institutional-futures section says the cache was empty, treat that as a pipeline failure to fetch rather than permission to omit the signal. The data stage must attempt the official TAIFEX open-interest table first; report FINI net position and day-over-day change when the live fallback succeeds, and only state unavailable after an explicit fetch error.
@@ -36689,6 +36695,8 @@ Coverage:
 
 
 - Always include a dedicated market overview table covering Taiwan/OTC, Korea, Japan, the semiconductor index, NASDAQ, S&P 500, TLT, Vietnam, DXY, JPY, gold, oil, and Bitcoin. If a market still cannot be assigned a comparable moving-average position after the Yahoo-derived fallback, omit that row from tables and mention it only in the narrative analysis.
+
+- Add three concise index-analysis subsections after the opening: `台灣指數`, `韓日股市`, and `美國股市`. `台灣指數` must discuss the latest points and the full 5-day, 10-day, monthly, quarterly, half-year, and yearly moving-average position for both the Taiwan Weighted Index and the TPEx/OTC Index. `韓日股市` must do the same for Korea KOSPI and Japan Nikkei 225. `美國股市` must do the same for S&P 500, NASDAQ Composite, and the Philadelphia Semiconductor Index; use SOXX only as the moving-average proxy for the semiconductor index and label that proxy explicitly. Include volume context and a short technical conclusion where supplied data permits. Do not replace exact point levels with vague up/down wording.
 
 
 
@@ -36710,7 +36718,9 @@ Coverage:
 
 
 
-- Use consistent display names for Vietnam, JPY, TLT, and DXY.
+- Use exactly one consistent display name for each fixed market: `越南大盤 (VNINDEX)`, `日圓匯率 (JPY=X)`, `美國長債 ETF (TLT)`, and `美元指數 (DXY)`. Never duplicate a noun in the rendered name; forbidden examples include `美元指數 美元指數` and `日圓匯率 日圓匯率`.
+
+- If any table uses compact moving-average notation such as `5-、10+、月=` instead of full phrases, place this exact legend immediately before the first such table: `均線簡寫：+ 代表站上該均線，- 代表跌破該均線，= 代表貼近該均線。`
 
 
 
@@ -37834,6 +37844,30 @@ Coverage:
         if ($ArticleTableValidation -notmatch $RequiredTable.Pattern) {
             throw ("Final article is missing required Markdown table: " + $RequiredTable.Name)
         }
+    }
+    if ($ArticleTableValidation -notmatch '(?m)^(?:#{1,4}\s*)?\*{0,2}產業龍頭觀察') {
+        throw 'Final article is missing required narrative section: 產業龍頭觀察'
+    }
+    foreach ($RequiredLeader in @('2330台積電', '2454聯發科', '2308台達電', '2383台光電', '2327國巨', '3711日月光投控', '2317鴻海')) {
+        if ($ArticleTableValidation -notmatch [regex]::Escape($RequiredLeader)) {
+            throw ("Final article is missing required industry-leader commentary: " + $RequiredLeader)
+        }
+    }
+    if ($ArticleTableValidation -notmatch '(?m)^(?:#{1,4}\s*)?\*{0,2}ETF 分組觀察') {
+        throw 'Final article is missing required narrative section: ETF 分組觀察'
+    }
+    foreach ($RequiredEtf in @('0050', '009816', '00981A', '00403A', '00991A', '00988A', '00990A', '00909', '00895', '00830', '00757', '00735', '00924', '00876', '00910', '0056', '00919', '00878', '00900', '00713')) {
+        if ($ArticleTableValidation -notmatch [regex]::Escape($RequiredEtf)) {
+            throw ("Final article is missing required ETF coverage: " + $RequiredEtf)
+        }
+    }
+    foreach ($ForbiddenDisplayName in @('美元指數 美元指數', '日圓匯率 日圓匯率')) {
+        if ($ArticleTableValidation.Contains($ForbiddenDisplayName)) {
+            throw ("Final article contains duplicated display name: " + $ForbiddenDisplayName)
+        }
+    }
+    if ($ArticleTableValidation -match '(?:^|[>|\s])5[+\-=]、10[+\-=]' -and $ArticleTableValidation -notmatch '均線簡寫：\+ 代表站上該均線，- 代表跌破該均線，= 代表貼近該均線。') {
+        throw 'Final article uses compact moving-average notation without the required legend.'
     }
 
     Write-Host '=== Final article ready ==='

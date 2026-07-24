@@ -1,0 +1,4 @@
+interface:
+  display_name: "TaiwanStockBot 報告控制"
+  short_description: "更新、驗證並部署 TaiwanStockBot 市場報告"
+  default_prompt: "Use $manage-taiwan-stock-report to refresh, validate, deploy, and verify the TaiwanStockBot market report."

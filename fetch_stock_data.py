@@ -1062,6 +1062,7 @@ YAHOO_HEADERS = {
 
 
 YAHOO_MARGIN_BALANCE_URL = "https://tw.stock.yahoo.com/margin-balance"
+TWSE_MARGIN_BALANCE_URL = "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN"
 
 TAIFEX_INSTITUTIONAL_TRADERS_URL = "https://www.taifex.com.tw/enl/eng3/futContractsDate"
 
@@ -1429,11 +1430,11 @@ class MarginBalanceSnapshot:
 
 
 
-    day_trade_change: float
+    day_trade_change: Optional[float]
 
 
 
-    day_trade_total: float
+    day_trade_total: Optional[float]
 
 
 
@@ -2663,16 +2664,30 @@ def _fetch_taifex_institutional_rows(session: requests.Session, reference_now: d
 
 
 def fetch_taifex_institutional_traders(reference_now: Optional[datetime] = None, session: Optional[requests.Session] = None) -> TaifexInstitutionalTraderSnapshot:
+    """Fetch the latest official TX open-interest snapshot on every run.
+
+    SQLite is only a resilience fallback.  A cached row must never prevent the
+    live TAIFEX date check, otherwise an old snapshot can remain in reports
+    indefinitely.
+    """
     row = load_latest_institutional_futures_snapshot()
     invalid_general_table_fallback = row is not None and str(row.get("data_source", "")).startswith("live-taifex-open-interest")
-    if row is not None and not invalid_general_table_fallback:
-        return TaifexInstitutionalTraderSnapshot(**row)
     if session is None:
         with requests.Session() as auto_session:
             return fetch_taifex_institutional_traders(reference_now, auto_session)
 
     local_now = reference_now or datetime.now(TAIPEI_TZ)
-    current_date, current_rows, previous_date, previous_rows = _fetch_taifex_institutional_rows(session, local_now)
+    try:
+        current_date, current_rows, previous_date, previous_rows = _fetch_taifex_institutional_rows(session, local_now)
+    except Exception as exc:
+        if row is not None and not invalid_general_table_fallback:
+            print(
+                f"[WARN] TAIFEX latest-date check failed; using cached "
+                f"{row.get('asof_date') or 'unknown-date'} snapshot: {exc}",
+                file=sys.stderr,
+            )
+            return TaifexInstitutionalTraderSnapshot(**row)
+        raise
 
     def net(rows: dict[str, dict[str, int]], participant: str) -> int:
         return int(rows.get(participant, {}).get("net_volume", 0))
@@ -2722,8 +2737,18 @@ def fetch_yahoo_margin_balance(session: Optional[requests.Session] = None) -> Ma
         raise RuntimeError("Yahoo margin balance date not found")
 
     numbers = re.findall(r'>([-+]?\d[\d,]*(?:\.\d+)?%?)<', row_html)
-    if len(numbers) < 7:
+    if len(numbers) < 6:
         raise RuntimeError(f"Yahoo margin balance row did not contain enough numeric fields: {numbers}")
+
+    # Yahoo removed the day-trade change column in July 2026.  Keep accepting
+    # the previous seven-column layout, but do not invent a change value when
+    # the current six-column layout only publishes the total.
+    if len(numbers) >= 7:
+        day_trade_change = _parse_margin_balance_number(numbers[5])
+        day_trade_total = _parse_margin_balance_number(numbers[6])
+    else:
+        day_trade_change = None
+        day_trade_total = _parse_margin_balance_number(numbers[5])
 
     local_now = datetime.now(TAIPEI_TZ)
 
@@ -2734,12 +2759,101 @@ def fetch_yahoo_margin_balance(session: Optional[requests.Session] = None) -> Ma
         short_change=_parse_margin_balance_number(numbers[2]),
         short_balance=_parse_margin_balance_number(numbers[3]),
         margin_ratio=_parse_margin_balance_number(numbers[4]),
-        day_trade_change=_parse_margin_balance_number(numbers[5]),
-        day_trade_total=_parse_margin_balance_number(numbers[6]),
+        day_trade_change=day_trade_change,
+        day_trade_total=day_trade_total,
         fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
         fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
         data_source="live-yahoo",
     )
+
+
+def fetch_twse_margin_balance(
+    reference_now: Optional[datetime] = None,
+    session: Optional[requests.Session] = None,
+) -> MarginBalanceSnapshot:
+    if session is None:
+        with requests.Session() as auto_session:
+            return fetch_twse_margin_balance(reference_now, auto_session)
+
+    local_now = reference_now or datetime.now(TAIPEI_TZ)
+    for lookback in range(16):
+        candidate = local_now.date() - timedelta(days=lookback)
+        url = (
+            f"{TWSE_MARGIN_BALANCE_URL}?date={candidate.strftime('%Y%m%d')}"
+            "&selectType=MS&response=json"
+        )
+        payload = fetch_json_with_retry(session, url, timeout=20, retries=4)
+        if payload.get("stat") != "OK" or not payload.get("date"):
+            continue
+
+        tables = payload.get("tables") or []
+        rows = (tables[0].get("data") if tables else None) or []
+        by_name = {str(row[0]).strip(): row for row in rows if isinstance(row, list) and len(row) >= 6}
+        financing_units = by_name.get("融資(交易單位)")
+        short_units = by_name.get("融券(交易單位)")
+        financing_amount = by_name.get("融資金額(仟元)")
+        if not financing_units or not short_units or not financing_amount:
+            raise RuntimeError("TWSE margin payload is missing required summary rows")
+
+        financing_units_today = _parse_margin_balance_number(financing_units[5])
+        short_previous = _parse_margin_balance_number(short_units[4])
+        short_today = _parse_margin_balance_number(short_units[5])
+        financing_amount_previous = _parse_margin_balance_number(financing_amount[4])
+        financing_amount_today = _parse_margin_balance_number(financing_amount[5])
+        margin_ratio = (
+            short_today / financing_units_today * 100.0
+            if financing_units_today
+            else 0.0
+        )
+
+        return MarginBalanceSnapshot(
+            asof_date=datetime.strptime(str(payload["date"]), "%Y%m%d").strftime("%Y/%m/%d"),
+            financing_change=(financing_amount_today - financing_amount_previous) / 100_000.0,
+            financing_balance=financing_amount_today / 100_000.0,
+            short_change=short_today - short_previous,
+            short_balance=short_today,
+            margin_ratio=margin_ratio,
+            day_trade_change=None,
+            day_trade_total=None,
+            fetched_at_local=local_now.strftime("%Y-%m-%d %H:%M:%S"),
+            fetched_at_utc=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            data_source="live-twse-official",
+        )
+
+    raise RuntimeError("Unable to locate an official TWSE margin date within 16 days")
+
+
+def fetch_margin_balance(reference_now: Optional[datetime] = None) -> MarginBalanceSnapshot:
+    with requests.Session() as session:
+        yahoo_snapshot: MarginBalanceSnapshot | None = None
+        yahoo_error: Exception | None = None
+        try:
+            yahoo_snapshot = fetch_yahoo_margin_balance(session)
+        except Exception as exc:
+            yahoo_error = exc
+
+        try:
+            official_snapshot = fetch_twse_margin_balance(reference_now, session)
+        except Exception as official_error:
+            if yahoo_snapshot is not None:
+                print(
+                    f"[WARN] TWSE margin fetch failed; using Yahoo "
+                    f"{yahoo_snapshot.asof_date} snapshot: {official_error}",
+                    file=sys.stderr,
+                )
+                return yahoo_snapshot
+            raise RuntimeError(
+                f"TWSE margin fetch failed: {official_error}; Yahoo fetch failed: {yahoo_error}"
+            ) from official_error
+
+        if yahoo_snapshot is not None and yahoo_snapshot.asof_date == official_snapshot.asof_date:
+            return replace(
+                official_snapshot,
+                day_trade_change=yahoo_snapshot.day_trade_change,
+                day_trade_total=yahoo_snapshot.day_trade_total,
+                data_source="live-twse-official+live-yahoo",
+            )
+        return official_snapshot
 
 
 
@@ -5011,11 +5125,14 @@ def print_margin_balance_snapshot(snapshot: MarginBalanceSnapshot) -> None:
 
 
 
-    day_trade_change_sign = "+" if snapshot.day_trade_change >= 0 else ""
+    day_trade_change_text = "N/A"
+    if snapshot.day_trade_change is not None:
+        day_trade_change_sign = "+" if snapshot.day_trade_change >= 0 else ""
+        day_trade_change_text = f"{day_trade_change_sign}{snapshot.day_trade_change:,.0f} 張"
 
 
 
-    print("【Yahoo 融資融券】")
+    print("【融資融券】")
 
 
     print(f"  資料日期: {snapshot.asof_date}")
@@ -5034,7 +5151,12 @@ def print_margin_balance_snapshot(snapshot: MarginBalanceSnapshot) -> None:
 
 
 
-    print(f"  當沖總量: {snapshot.day_trade_total:,.0f} 張，增減 {day_trade_change_sign}{snapshot.day_trade_change:,.0f} 張")
+    day_trade_total_text = (
+        f"{snapshot.day_trade_total:,.0f} 張"
+        if snapshot.day_trade_total is not None
+        else "N/A"
+    )
+    print(f"  當沖總量: {day_trade_total_text}，增減 {day_trade_change_text}")
 
 
 
@@ -5144,7 +5266,7 @@ def get_market_data() -> None:
 
 
 
-            executor.submit(fetch_yahoo_margin_balance): "margin",
+            executor.submit(fetch_margin_balance, reference_now=run_started): "margin",
 
 
 
